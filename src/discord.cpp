@@ -309,6 +309,11 @@ std::string formatResolution(const std::string& resolution)
         return resolution + "p";
     }
 
+    if (resolution == "4k")
+    {
+        return "4K";
+    }
+
     return resolution; // Return as is if it's already "4K", "HD", etc.
 }
 
@@ -363,36 +368,21 @@ json Discord::createActivity(const MediaInfo &info)
 	else if (info.type == MediaType::Movie)
 	{
 		activityType = 3; // Watching
-		details = info.title + " (" + std::to_string(info.year) + ")";
-		assets["large_text"] = info.title;
-
-		std::stringstream state_ss;
-		if (!info.genres.empty())
-		{
-			state_ss << std::accumulate(std::next(info.genres.begin()), info.genres.end(),
-									   info.genres[0],
-									   [](std::string a, const std::string &b)
-									   {
-										   return a + ", " + b;
-									   });
-		}
-		else
-		{
-			state_ss << "Watching Movie"; // Fallback state
-		}
+		
+		std::stringstream details_ss;
+		details_ss << info.title << " (" << info.year << ")";
 
 		std::string formatted_resolution = formatResolution(info.videoResolution);
 		if (!formatted_resolution.empty())
 		{
-			state_ss << " • " << formatted_resolution;
+			details_ss << " • " << formatted_resolution;
 		}
 
 		std::string formatted_bitrate = formatBitrate(info.bitrate);
 		if (!formatted_bitrate.empty())
 		{
-			state_ss << " • " << formatted_bitrate;
+			details_ss << " • " << formatted_bitrate;
 		}
-		state = state_ss.str();
 
         // Check for Blu-ray or REMUX in the filename
         std::string lower_filename = info.filename;
@@ -401,8 +391,24 @@ json Discord::createActivity(const MediaInfo &info)
 
         if (lower_filename.find("remux") != std::string::npos || lower_filename.find("bluray") != std::string::npos)
         {
-            state += " (Bluray)";
+            details_ss << " (Bluray)";
         }
+		details = details_ss.str();
+		assets["large_text"] = info.title;
+
+		if (!info.genres.empty())
+		{
+			state = std::accumulate(std::next(info.genres.begin()), info.genres.end(),
+									   info.genres[0],
+									   [](std::string a, const std::string &b)
+									   {
+										   return a + ", " + b;
+									   });
+		}
+		else
+		{
+			state = "Watching Movie"; // Fallback state
+		}
 	}
 	else if (info.type == MediaType::Music)
 	{
