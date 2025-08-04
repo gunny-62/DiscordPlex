@@ -3,21 +3,6 @@
 #include "resources.h"
 #include <windows.h>
 
-// Control IDs
-#define IDC_GROUP_MUSIC 101
-#define IDC_CHECK_SHOW_MUSIC 102
-#define IDC_GROUP_MOVIES 103
-#define IDC_CHECK_SHOW_MOVIES 104
-#define IDC_GROUP_TVSHOWS 105
-#define IDC_CHECK_SHOW_TVSHOWS 106
-#define IDC_GROUP_GENERAL 107
-#define IDC_CHECK_SHOW_BITRATE 108
-#define IDC_CHECK_SHOW_QUALITY 109
-#define IDC_EDIT_EPISODE_FORMAT 110
-#define IDC_EDIT_SEASON_FORMAT 111
-#define IDC_BUTTON_SAVE 112
-#define IDC_BUTTON_CANCEL 113
-
 // Global variables for this file
 static HWND g_hDlg = NULL;
 
@@ -52,8 +37,17 @@ INT_PTR CALLBACK PreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
         CheckDlgButton(hDlg, IDC_CHECK_SHOW_TVSHOWS, config.getShowTVShows() ? BST_CHECKED : BST_UNCHECKED);
         CheckDlgButton(hDlg, IDC_CHECK_SHOW_BITRATE, config.getShowBitrate() ? BST_CHECKED : BST_UNCHECKED);
         CheckDlgButton(hDlg, IDC_CHECK_SHOW_QUALITY, config.getShowQuality() ? BST_CHECKED : BST_UNCHECKED);
-        SetDlgItemText(hDlg, IDC_EDIT_EPISODE_FORMAT, config.getEpisodeFormat().c_str());
-        SetDlgItemText(hDlg, IDC_EDIT_SEASON_FORMAT, config.getSeasonFormat().c_str());
+        // Episode Format ComboBox
+        HWND hEpisodeCombo = GetDlgItem(hDlg, IDC_EDIT_EPISODE_FORMAT);
+        SendMessage(hEpisodeCombo, CB_ADDSTRING, 0, (LPARAM) "S{season_num}E{episode_num}");
+        SendMessage(hEpisodeCombo, CB_ADDSTRING, 0, (LPARAM) "Season {season_num} Episode {episode_num}");
+        SendMessage(hEpisodeCombo, CB_SETCURSEL, (WPARAM)0, 0);
+
+        // Season Format ComboBox
+        HWND hSeasonCombo = GetDlgItem(hDlg, IDC_EDIT_SEASON_FORMAT);
+        SendMessage(hSeasonCombo, CB_ADDSTRING, 0, (LPARAM) "Season {season_num}");
+        SendMessage(hSeasonCombo, CB_ADDSTRING, 0, (LPARAM) "S{season_num}");
+        SendMessage(hSeasonCombo, CB_SETCURSEL, (WPARAM)0, 0);
 
         return (INT_PTR)TRUE;
     }
@@ -71,9 +65,14 @@ INT_PTR CALLBACK PreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
             config.setShowQuality(IsDlgButtonChecked(hDlg, IDC_CHECK_SHOW_QUALITY) == BST_CHECKED);
 
             char buffer[256];
-            GetDlgItemText(hDlg, IDC_EDIT_EPISODE_FORMAT, buffer, 256);
+            HWND hEpisodeCombo = GetDlgItem(hDlg, IDC_EDIT_EPISODE_FORMAT);
+            int episodeIndex = SendMessage(hEpisodeCombo, CB_GETCURSEL, 0, 0);
+            SendMessage(hEpisodeCombo, CB_GETLBTEXT, episodeIndex, (LPARAM)buffer);
             config.setEpisodeFormat(buffer);
-            GetDlgItemText(hDlg, IDC_EDIT_SEASON_FORMAT, buffer, 256);
+
+            HWND hSeasonCombo = GetDlgItem(hDlg, IDC_EDIT_SEASON_FORMAT);
+            int seasonIndex = SendMessage(hSeasonCombo, CB_GETCURSEL, 0, 0);
+            SendMessage(hSeasonCombo, CB_GETLBTEXT, seasonIndex, (LPARAM)buffer);
             config.setSeasonFormat(buffer);
 
             config.saveConfig();
