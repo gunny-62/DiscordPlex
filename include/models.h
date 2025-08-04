@@ -64,6 +64,7 @@ struct MediaInfo
     std::string originalTitle;       // Original title (original language)
     MediaType type;                  // Type of media (movie, TV show)
     std::string artPath;             // Path to art on the server (cover image)
+    std::string thumbPath;           // Path to the thumbnail on the server
     int year;                        // Year of release
     std::string summary;             // Summary of the media
     std::vector<std::string> genres; // List of genres

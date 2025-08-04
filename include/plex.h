@@ -102,15 +102,15 @@ private:
 	MediaInfo fetchMediaDetails(const std::string &serverUri, const std::string &accessToken,
 								const std::string &mediaKey);
 	void extractBasicMediaInfo(const nlohmann::json &metadata, MediaInfo &info);
-	void extractMovieSpecificInfo(const nlohmann::json &metadata, MediaInfo &info);
+	void extractMovieSpecificInfo(const nlohmann::json &metadata, MediaInfo &info, const std::string &serverUri, const std::string &accessToken);
 	void extractTVShowSpecificInfo(const nlohmann::json &metadata, MediaInfo &info);
 	void fetchGrandparentMetadata(const std::string &serverUrl, const std::string &accessToken,
 								  MediaInfo &info);
-	void parseGuid(const nlohmann::json &metadata, MediaInfo &info);
+	void parseGuid(const nlohmann::json &metadata, MediaInfo &info, const std::string &serverUri, const std::string &accessToken);
 	void parseGenres(const nlohmann::json &metadata, MediaInfo &info);
 	bool isAnimeContent(const nlohmann::json &metadata);
 	void fetchAnimeMetadata(const nlohmann::json &metadata, MediaInfo &info);
-	void fetchTMDBArtwork(const std::string &tmdbId, MediaInfo &info);
+	void fetchTMDBArtwork(const std::string &tmdbId, MediaInfo &info, const std::string &serverUri, const std::string &plexAccessToken);
 	std::string fetchSessionUsername(const std::string &serverUri, const std::string &accessToken,
 									 const std::string &sessionKey);
 	std::string getPreferredServerUri(const std::shared_ptr<PlexServer> &server);

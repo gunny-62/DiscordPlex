@@ -910,7 +910,7 @@ MediaInfo Plex::fetchMediaDetails(const std::string &serverUri, const std::strin
         std::string type = metadata.value("type", "unknown");
         if (type == "movie")
         {
-            extractMovieSpecificInfo(metadata, info);
+            extractMovieSpecificInfo(metadata, info, serverUri, accessToken);
         }
         else if (type == "episode")
         {
@@ -945,15 +945,16 @@ void Plex::extractBasicMediaInfo(const nlohmann::json &metadata, MediaInfo &info
     info.duration = metadata.value("duration", 0) / 1000.0; // Convert from milliseconds to seconds
     info.summary = metadata.value("summary", "No summary available");
     info.year = metadata.value("year", 0);
+    info.thumbPath = metadata.value("thumb", "");
     // Extract potential album/parent title
     info.album = metadata.value("parentTitle", "");       // Often the album for music
     info.artist = metadata.value("grandparentTitle", ""); // Often the artist for music
 }
 
-void Plex::extractMovieSpecificInfo(const nlohmann::json &metadata, MediaInfo &info)
+void Plex::extractMovieSpecificInfo(const nlohmann::json &metadata, MediaInfo &info, const std::string &serverUri, const std::string &accessToken)
 {
     info.type = MediaType::Movie;
-    parseGuid(metadata, info);
+    parseGuid(metadata, info, serverUri, accessToken);
     parseGenres(metadata, info);
 }
 
@@ -1019,7 +1020,7 @@ void Plex::fetchGrandparentMetadata(const std::string &serverUrl, const std::str
 
         auto metadata = json["MediaContainer"]["Metadata"][0];
 
-        parseGuid(metadata, info);
+        parseGuid(metadata, info, serverUrl, accessToken);
 
         // Parse genres
         parseGenres(metadata, info);
@@ -1030,7 +1031,7 @@ void Plex::fetchGrandparentMetadata(const std::string &serverUrl, const std::str
     }
 }
 
-void Plex::parseGuid(const nlohmann::json &metadata, MediaInfo &info)
+void Plex::parseGuid(const nlohmann::json &metadata, MediaInfo &info, const std::string &serverUri, const std::string &accessToken)
 {
     if (metadata.contains("Guid") && metadata["Guid"].is_array())
     {
@@ -1061,7 +1062,7 @@ void Plex::parseGuid(const nlohmann::json &metadata, MediaInfo &info)
 
                 if (needArtworkFetch)
                 {
-                    fetchTMDBArtwork(info.tmdbId, info);
+                    fetchTMDBArtwork(info.tmdbId, info, serverUri, accessToken);
 
                     // Cache the result if we found artwork
                     if (!info.artPath.empty())
@@ -1178,9 +1179,16 @@ void Plex::fetchAnimeMetadata(const nlohmann::json &metadata, MediaInfo &info)
     }
 }
 
-void Plex::fetchTMDBArtwork(const std::string &tmdbId, MediaInfo &info)
+void Plex::fetchTMDBArtwork(const std::string &tmdbId, MediaInfo &info, const std::string &serverUri, const std::string &plexAccessToken)
 {
     LOG_DEBUG("Plex", "Fetching TMDB artwork for ID: " + tmdbId);
+
+    if (!info.thumbPath.empty() && !serverUri.empty() && !plexAccessToken.empty())
+    {
+        info.artPath = serverUri + "/photo/:/transcode?width=512&height=512&minSize=1&url=" + info.thumbPath + "&X-Plex-Token=" + plexAccessToken;
+        LOG_INFO("Plex", "Using Plex transcoder for artwork: " + info.artPath);
+        return;
+    }
 
     // TMDB API requires an access token - get it from config
     std::string accessToken = Config::getInstance().getTMDBAccessToken();
