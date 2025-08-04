@@ -75,7 +75,6 @@ echo.
 echo --- Creating GitHub release and uploading installer... ---
 gh release create "%VERSION_TAG%" --repo "%GITHUB_REPO%" --title "Release %VERSION_TAG%" --notes-file "!CHANGELOG_PATH!"
 if %errorlevel% neq 0 (
->>>>>>> Stashed changes
     echo ERROR: GitHub release creation failed.
     pause
     exit /b %errorlevel%
