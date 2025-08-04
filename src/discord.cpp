@@ -462,10 +462,10 @@ json Discord::createActivity(const MediaInfo &info)
 		activityType = 2;						  // Listening
 		details = info.title;					  // Track Title
 		std::string musicFormat = Config::getInstance().getMusicFormat();
-		if (musicFormat == "Gatekeep Mode")
+		if (musicFormat == "In")
 		{
 			details = "";
-			state = "";
+			state = "In";
 		}
 		size_t pos = musicFormat.find("{title}");
 		if (pos != std::string::npos)
@@ -537,7 +537,14 @@ json Discord::createActivity(const MediaInfo &info)
 
 	if (details.empty())
 	{
-		details = "Watching something..."; // Fallback if details somehow ends up empty
+		if (activityType == 2)
+		{
+			details = "Listening to something..."; // Fallback for music
+		}
+		else
+		{
+			details = "Watching something..."; // Fallback if details somehow ends up empty
+		}
 	}
 	if (state.empty())
 	{
