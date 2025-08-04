@@ -157,8 +157,12 @@ bool HttpClient::downloadFile(const std::string &url, const std::map<std::string
 
     curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, fwrite);
     curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, fp);
+    curl_easy_setopt(m_curl, CURLOPT_FOLLOWLOCATION, 1L);
 
-    struct curl_slist *curl_headers = createHeaderList(headers);
+    std::map<std::string, std::string> modified_headers = headers;
+    modified_headers["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36";
+
+    struct curl_slist *curl_headers = createHeaderList(modified_headers);
     curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, curl_headers);
 
     LOG_DEBUG("HttpClient", "Executing download request");
@@ -166,12 +170,23 @@ bool HttpClient::downloadFile(const std::string &url, const std::map<std::string
     curl_slist_free_all(curl_headers);
     fclose(fp);
 
-    bool success = checkResponse(res);
-    if (success)
+    if (res != CURLE_OK)
     {
-        LOG_DEBUG_STREAM("HttpClient", "File download succeeded.");
+        LOG_ERROR("HttpClient", "Download failed: " + std::string(curl_easy_strerror(res)));
+        return false;
     }
-    return success;
+
+    long response_code;
+    curl_easy_getinfo(m_curl, CURLINFO_RESPONSE_CODE, &response_code);
+
+    if (response_code < 200 || response_code >= 400) // Allow 3xx redirects
+    {
+        LOG_ERROR("HttpClient", "Download failed with HTTP status code: " + std::to_string(response_code));
+        return false;
+    }
+
+    LOG_DEBUG_STREAM("HttpClient", "File download succeeded with status code: " << response_code);
+    return true;
 }
 
 size_t HttpClient::sseCallback(char *ptr, size_t size, size_t nmemb, void *userdata)
