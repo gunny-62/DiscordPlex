@@ -8,7 +8,24 @@ if (POLICY CMP0141)
   set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
 endif()
 
-project ("PresenceForPlex" VERSION 0.3.6 LANGUAGES CXX)
+project ("PresenceForPlex" LANGUAGES CXX)
+
+# Read version from file
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/version.txt")
+    file(READ "${CMAKE_CURRENT_SOURCE_DIR}/version.txt" PROJECT_VERSION)
+    string(STRIP "${PROJECT_VERSION}" PROJECT_VERSION)
+else()
+    set(PROJECT_VERSION "0.0.0")
+endif()
+
+# Use a regular expression to parse the version string
+if(PROJECT_VERSION MATCHES "^v?([0-9]+)\\.([0-9]+)\\.([0-9]+)$")
+    set(PROJECT_VERSION_MAJOR ${CMAKE_MATCH_1})
+    set(PROJECT_VERSION_MINOR ${CMAKE_MATCH_2})
+    set(PROJECT_VERSION_PATCH ${CMAKE_MATCH_3})
+else()
+    message(FATAL_ERROR "Invalid version string: '${PROJECT_VERSION}'. Expected format: vX.Y.Z or X.Y.Z")
+endif()
 
 if(MSVC)
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")

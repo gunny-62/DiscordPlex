@@ -16,6 +16,9 @@ if not defined VERSION_TAG (
     exit /b 1
 )
 
+REM --- Write version to file ---
+echo !VERSION_TAG! > version.txt
+
 REM --- Run the Build Script ---
 echo.
 echo --- Running build script... ---
@@ -42,11 +45,11 @@ if %errorlevel% neq 0 (
 
 REM --- Find the installer file ---
 set "INSTALLER_PATH="
-for %%F in ("PresenceForPlex-*-win64.exe") do (
+for %%F in ("release\PresenceForPlex-*-win64.exe") do (
     set "INSTALLER_PATH=%%F"
 )
 if not defined INSTALLER_PATH (
-    echo ERROR: Could not find the installer .exe in the main directory.
+    echo ERROR: Could not find the installer .exe in the 'release' directory.
     pause
     exit /b 1
 )
