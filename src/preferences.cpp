@@ -60,10 +60,9 @@ INT_PTR CALLBACK PreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
         HWND hTVCombo = GetDlgItem(hDlg, IDC_COMBO_TV_FORMAT);
         SendMessage(hTVCombo, CB_ADDSTRING, 0, (LPARAM) "{show_title} - {season_episode} - {episode_title}");
         SendMessage(hTVCombo, CB_ADDSTRING, 0, (LPARAM) "{episode_title}");
-        SendMessage(hTVCombo, CB_ADDSTRING, 0, (LPARAM) "{show_title}");
         SendMessage(hTVCombo, CB_ADDSTRING, 0, (LPARAM) "{season} - {episode_title}");
         SendMessage(hTVCombo, CB_ADDSTRING, 0, (LPARAM) "{season} - {episode_number}");
-        SendMessage(hTVCombo, CB_ADDSTRING, 0, (LPARAM) "{season}.{episode_number} - {episode_title}");
+        SendMessage(hTVCombo, CB_ADDSTRING, 0, (LPARAM) "{season}-{episode_number} - {episode_title}");
         SendMessage(hTVCombo, CB_SELECTSTRING, -1, (LPARAM)config.getTVShowFormat().c_str());
 
         return (INT_PTR)TRUE;
