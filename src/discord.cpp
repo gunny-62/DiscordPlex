@@ -345,34 +345,40 @@ json Discord::createActivity(const MediaInfo &info)
 		assets["large_text"] = info.grandparentTitle;
 
 		std::string tvShowFormat = Config::getInstance().getTVShowFormat();
-		size_t pos = tvShowFormat.find("{show_title}");
+		std::string seasonFormat = Config::getInstance().getSeasonFormat();
+		std::string episodeFormat = Config::getInstance().getEpisodeFormat();
+
+		size_t pos = seasonFormat.find("{season_num}");
+		if (pos != std::string::npos)
+		{
+			seasonFormat.replace(pos, std::string("{season_num}").length(), std::to_string(info.season));
+		}
+
+		pos = episodeFormat.find("{episode_num}");
+		if (pos != std::string::npos)
+		{
+			episodeFormat.replace(pos, std::string("{episode_num}").length(), std::to_string(info.episode));
+		}
+
+		pos = tvShowFormat.find("{show_title}");
 		if (pos != std::string::npos)
 		{
 			tvShowFormat.replace(pos, std::string("{show_title}").length(), info.grandparentTitle);
 		}
-		pos = tvShowFormat.find("{season_episode}");
-		if (pos != std::string::npos)
-		{
-			std::string season_episode = "S" + std::to_string(info.season) + "E" + std::to_string(info.episode);
-			tvShowFormat.replace(pos, std::string("{season_episode}").length(), season_episode);
-		}
+
 		pos = tvShowFormat.find("{episode_title}");
 		if (pos != std::string::npos)
 		{
 			tvShowFormat.replace(pos, std::string("{episode_title}").length(), info.title);
 		}
-        pos = tvShowFormat.find("{season_num}");
-        if (pos != std::string::npos)
-        {
-            tvShowFormat.replace(pos, std::string("{season_num}").length(), std::to_string(info.season));
-        }
-        pos = tvShowFormat.find("{episode_num}");
-        if (pos != std::string::npos)
-        {
-            tvShowFormat.replace(pos, std::string("{episode_num}").length(), std::to_string(info.episode));
-        }
-		state = tvShowFormat;
 
+		pos = tvShowFormat.find("{season_episode}");
+		if (pos != std::string::npos)
+		{
+			tvShowFormat.replace(pos, std::string("{season_episode}").length(), seasonFormat + episodeFormat);
+		}
+
+		state = tvShowFormat;
 		std::stringstream state_ss;
 		state_ss << state;
 

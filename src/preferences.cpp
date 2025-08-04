@@ -40,8 +40,8 @@ INT_PTR CALLBACK PreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
         CheckDlgButton(hDlg, IDC_CHECK_SHOW_QUALITY, config.getShowQuality() ? BST_CHECKED : BST_UNCHECKED);
         // Episode Format ComboBox
         HWND hEpisodeCombo = GetDlgItem(hDlg, IDC_EDIT_EPISODE_FORMAT);
-        SendMessage(hEpisodeCombo, CB_ADDSTRING, 0, (LPARAM) "S{season_num}E{episode_num}");
-        SendMessage(hEpisodeCombo, CB_ADDSTRING, 0, (LPARAM) "Season {season_num} Episode {episode_num}");
+        SendMessage(hEpisodeCombo, CB_ADDSTRING, 0, (LPARAM) "E{episode_num}");
+        SendMessage(hEpisodeCombo, CB_ADDSTRING, 0, (LPARAM) "Episode {episode_num}");
         SendMessage(hEpisodeCombo, CB_SETCURSEL, (WPARAM)0, 0);
 
         // Season Format ComboBox
@@ -58,8 +58,9 @@ INT_PTR CALLBACK PreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
 
         HWND hTVCombo = GetDlgItem(hDlg, IDC_COMBO_TV_FORMAT);
         SendMessage(hTVCombo, CB_ADDSTRING, 0, (LPARAM) "{show_title} - {season_episode} - {episode_title}");
-        SendMessage(hTVCombo, CB_ADDSTRING, 0, (LPARAM) "{show_title} - {episode_title}");
         SendMessage(hTVCombo, CB_ADDSTRING, 0, (LPARAM) "{episode_title}");
+        SendMessage(hTVCombo, CB_ADDSTRING, 0, (LPARAM) "{show_title}");
+        SendMessage(hTVCombo, CB_ADDSTRING, 0, (LPARAM) "{show_title} - {episode_title}");
         SendMessage(hTVCombo, CB_SETCURSEL, (WPARAM)0, 0);
 
         return (INT_PTR)TRUE;
