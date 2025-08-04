@@ -459,46 +459,53 @@ json Discord::createActivity(const MediaInfo &info)
 		{
 			return {};
 		}
-		activityType = 2;						  // Listening
-		details = info.title;					  // Track Title
-		std::string musicFormat = Config::getInstance().getMusicFormat();
+		activityType = 2; // Listening
+
 		if (Config::getInstance().getGatekeepMusic())
 		{
-			details = "Listening to something...";
-			state = "In";
+			details = "Music";
+			state = info.album;
 		}
-		size_t pos = musicFormat.find("{title}");
-		if (pos != std::string::npos)
+		else
 		{
-			musicFormat.replace(pos, std::string("{title}").length(), info.title);
+			details = info.title; // Track Title
+			std::string musicFormat = Config::getInstance().getMusicFormat();
+
+			size_t pos = musicFormat.find("{title}");
+			if (pos != std::string::npos)
+			{
+				musicFormat.replace(pos, std::string("{title}").length(), info.title);
+			}
+			pos = musicFormat.find("{artist}");
+			if (pos != std::string::npos)
+			{
+				musicFormat.replace(pos, std::string("{artist}").length(), info.artist);
+			}
+			pos = musicFormat.find("{album}");
+			if (pos != std::string::npos)
+			{
+				musicFormat.replace(pos, std::string("{album}").length(), info.album);
+			}
+			state = musicFormat;
 		}
-		pos = musicFormat.find("{artist}");
-		if (pos != std::string::npos)
-		{
-			musicFormat.replace(pos, std::string("{artist}").length(), info.artist);
-		}
-		pos = musicFormat.find("{album}");
-		if (pos != std::string::npos)
-		{
-			musicFormat.replace(pos, std::string("{album}").length(), info.album);
-		}
-		state = musicFormat;
+
 		if (Config::getInstance().getShowFlac())
 		{
 			std::string lower_filename = info.filename;
 			std::transform(lower_filename.begin(), lower_filename.end(), lower_filename.begin(),
-						   [](unsigned char c){ return std::tolower(c); });
+						   [](unsigned char c)
+						   { return std::tolower(c); });
 
 			if (lower_filename.find("flac") != std::string::npos)
 			{
 				std::string flac_quality;
-				if (lower_filename.find("44.1") != std::string::npos && lower_filename.find("16") != std::string::npos)
+				if (info.audioSamplingRate > 0 && info.audioBitDepth > 0)
 				{
-					flac_quality = "44.1/16 FLAC";
-				}
-				else if (lower_filename.find("44.1") != std::string::npos && lower_filename.find("24") != std::string::npos)
-				{
-					flac_quality = "44.1/24 FLAC";
+					// Convert sampling rate to kHz if it's a large number
+					double samplingRateKHz = info.audioSamplingRate / 1000.0;
+					std::stringstream ss;
+					ss << std::fixed << std::setprecision(1) << samplingRateKHz;
+					flac_quality = ss.str() + "/" + std::to_string(info.audioBitDepth) + " FLAC";
 				}
 				else
 				{

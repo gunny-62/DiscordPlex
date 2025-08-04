@@ -83,6 +83,8 @@ struct MediaInfo
     // Music specific
     std::string album;  // Album title
     std::string artist; // Artist name
+    int audioBitDepth;
+    int audioSamplingRate;
 
     // Playback info
     std::string username; // Username of the person watching
@@ -103,5 +105,7 @@ struct MediaInfo
                   duration(0),
                   startTime(0),
                   type(MediaType::Unknown),
-                  bitrate(0) {}
+                  bitrate(0),
+                  audioBitDepth(0),
+                  audioSamplingRate(0) {}
 };

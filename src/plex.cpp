@@ -903,6 +903,18 @@ MediaInfo Plex::fetchMediaDetails(const std::string &serverUri, const std::strin
             {
                 auto part = media["Part"][0];
                 info.filename = part.value("file", "");
+                if (part.contains("Stream") && part["Stream"].is_array())
+                {
+                    for (const auto &stream : part["Stream"])
+                    {
+                        if (stream.value("streamType", 0) == 2) // Audio stream
+                        {
+                            info.audioBitDepth = stream.value("bitDepth", 0);
+                            info.audioSamplingRate = stream.value("samplingRate", 0);
+                            break;
+                        }
+                    }
+                }
             }
         }
 
