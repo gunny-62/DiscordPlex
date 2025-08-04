@@ -370,19 +370,7 @@ json Discord::createActivity(const MediaInfo &info)
 		activityType = 3; // Watching
 		details = info.title + " (" + std::to_string(info.year) + ")";
 		
-		if (!info.genres.empty())
-		{
-			state = std::accumulate(std::next(info.genres.begin()), info.genres.end(),
-									   info.genres[0],
-									   [](std::string a, const std::string &b)
-									   {
-										   return a + ", " + b;
-									   });
-		}
-		else
-		{
-			state = "Watching Movie"; // Fallback state
-		}
+		state = "Watching Movie"; // Fallback state
 
 		std::stringstream large_text_ss;
 		std::string formatted_resolution = formatResolution(info.videoResolution);
