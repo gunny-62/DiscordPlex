@@ -463,8 +463,8 @@ json Discord::createActivity(const MediaInfo &info)
 
 		if (Config::getInstance().getGatekeepMusic())
 		{
-			details = "Music";
-			state = info.album;
+			details = "Listening to something..";
+			state = "In";
 		}
 		else
 		{
