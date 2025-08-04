@@ -99,6 +99,7 @@ private:
 	std::string urlEncode(const std::string &value);
 
 	// Media info methods
+	void buildArtworkUrl(MediaInfo &info, const std::string &serverUri, const std::string &accessToken);
 	MediaInfo fetchMediaDetails(const std::string &serverUri, const std::string &accessToken,
 								const std::string &mediaKey);
 	void extractBasicMediaInfo(const nlohmann::json &metadata, MediaInfo &info);

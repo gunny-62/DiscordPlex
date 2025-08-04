@@ -927,6 +927,8 @@ MediaInfo Plex::fetchMediaDetails(const std::string &serverUri, const std::strin
             info.type = MediaType::Unknown;
         }
 
+        buildArtworkUrl(info, serverUri, accessToken);
+
         LOG_INFO("Plex", "Media details: " + info.title + " (" + type + ")");
     }
     catch (const std::exception &e)
@@ -1180,6 +1182,15 @@ void Plex::fetchAnimeMetadata(const nlohmann::json &metadata, MediaInfo &info)
         {
             LOG_ERROR("Plex", "Failed to fetch data from Jikan API");
         }
+    }
+}
+
+void Plex::buildArtworkUrl(MediaInfo &info, const std::string &serverUri, const std::string &accessToken)
+{
+    if (!info.thumbPath.empty() && !serverUri.empty() && !accessToken.empty())
+    {
+        info.artPath = serverUri + "/photo/:/transcode?width=256&height=256&minSize=1&url=" + info.thumbPath + "&X-Plex-Token=" + accessToken;
+        LOG_INFO("Plex", "Built artwork URL: " + info.artPath);
     }
 }
 
