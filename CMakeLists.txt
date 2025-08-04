@@ -64,7 +64,7 @@ endif()
 
 install(TARGETS PresenceForPlex
     RUNTIME DESTINATION .)         # Root of staging dir
-install(FILES LICENSE README.md
+install(FILES README.md
     DESTINATION .)
 
 # Platform-specific packaging options
@@ -106,6 +106,5 @@ set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
 set(CPACK_PACKAGE_VENDOR "Eric")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Discord Rich Presence for Plex")
 set(CPACK_PACKAGE_EXECUTABLES "PresenceForPlex" "Presence For Plex")
-set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 
 include(CPack)

@@ -541,7 +541,7 @@ FunctionEnd
   
   !insertmacro MUI_PAGE_WELCOME
 
-  !insertmacro MUI_PAGE_LICENSE C:\Users\Eric\iCloudDrive\Backup\discord-presence-for-plex\LICENSE
+  !insertmacro MUI_PAGE_LICENSE "C:\Program Files\CMake\share\cmake-4.1\Templates\CPack.GenericLicense.txt"
 
   Page custom InstallOptionsPage
   !insertmacro MUI_PAGE_DIRECTORY
@@ -854,7 +854,6 @@ Section "Uninstall"
 
   ;Remove files we installed.
   ;Keep the list of directories here in sync with the File commands above.
-  Delete "$INSTDIR\LICENSE"
   Delete "$INSTDIR\PresenceForPlex.exe"
   Delete "$INSTDIR\README.md"
 
