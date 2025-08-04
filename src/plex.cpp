@@ -977,6 +977,7 @@ void Plex::extractMusicSpecificInfo(const nlohmann::json &metadata, MediaInfo &i
 {
     info.type = MediaType::Music;
     info.thumbPath = metadata.value("parentThumb", "");
+    LOG_INFO("Plex", "Found music thumb path: " + info.thumbPath);
 
     parseGuid(metadata, info, serverUri, accessToken);
     parseGenres(metadata, info);
