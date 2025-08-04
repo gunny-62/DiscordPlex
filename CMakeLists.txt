@@ -118,6 +118,7 @@ install(FILES README.md
 # Platform-specific packaging options
 if(WIN32)
     set(CPACK_GENERATOR "NSIS")
+    set(CPACK_NSIS_TARGET_ARCH "amd64")
     # Set icon for NSIS installer
     set(CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}/assets/icon.ico")
     set(CPACK_NSIS_MUI_UNIICON "${CMAKE_CURRENT_SOURCE_DIR}/assets/icon.ico")
