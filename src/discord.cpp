@@ -368,20 +368,32 @@ json Discord::createActivity(const MediaInfo &info)
 	else if (info.type == MediaType::Movie)
 	{
 		activityType = 3; // Watching
-		
-		std::stringstream details_ss;
-		details_ss << info.title << " (" << info.year << ")";
+		details = info.title + " (" + std::to_string(info.year) + ")";
+		assets["large_text"] = info.title;
+
+		std::stringstream state_ss;
+		if (!info.genres.empty())
+		{
+			state_ss << std::accumulate(std::next(info.genres.begin()), info.genres.end(),
+									   info.genres[0],
+									   [](std::string a, const std::string &b)
+									   {
+										   return a + ", " + b;
+									   });
+		}
 
 		std::string formatted_resolution = formatResolution(info.videoResolution);
 		if (!formatted_resolution.empty())
 		{
-			details_ss << " • " << formatted_resolution;
+			if (state_ss.str().length() > 0) { state_ss << " • "; }
+			state_ss << formatted_resolution;
 		}
 
 		std::string formatted_bitrate = formatBitrate(info.bitrate);
 		if (!formatted_bitrate.empty())
 		{
-			details_ss << " • " << formatted_bitrate;
+			if (state_ss.str().length() > 0) { state_ss << " • "; }
+			state_ss << formatted_bitrate;
 		}
 
         // Check for Blu-ray or REMUX in the filename
@@ -391,24 +403,10 @@ json Discord::createActivity(const MediaInfo &info)
 
         if (lower_filename.find("remux") != std::string::npos || lower_filename.find("bluray") != std::string::npos)
         {
-            details_ss << " (Bluray)";
+			if (state_ss.str().length() > 0) { state_ss << " • "; }
+            state_ss << "Bluray";
         }
-		details = details_ss.str();
-		assets["large_text"] = info.title;
-
-		if (!info.genres.empty())
-		{
-			state = std::accumulate(std::next(info.genres.begin()), info.genres.end(),
-									   info.genres[0],
-									   [](std::string a, const std::string &b)
-									   {
-										   return a + ", " + b;
-									   });
-		}
-		else
-		{
-			state = "Watching Movie"; // Fallback state
-		}
+		state = state_ss.str();
 	}
 	else if (info.type == MediaType::Music)
 	{
