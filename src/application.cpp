@@ -96,13 +96,6 @@ void Application::checkForUpdates()
             {"User-Agent", "Presence-For-Plex-Update-Checker"},
             {"Accept", "application/json"}};
 
-        // Add authorization token if available
-        std::string pat = Config::getInstance().getGithubPAT();
-        if (!pat.empty())
-        {
-            headers["Authorization"] = "token " + pat;
-            LOG_INFO("Application", "Using GitHub PAT for update check");
-        }
 
         // Response from GitHub API
         std::string response;
