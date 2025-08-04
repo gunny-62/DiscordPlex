@@ -5,8 +5,10 @@ A lightweight C++ application that displays your Plex media activity in Discord'
 ## Features
 
 -   Current Plex activity in your Discord status.
--   Includes show titles, episode information, and progress, Bitrate, Quality, and Bluray or not.
+-   Includes show titles, episode information, and progress, Bitrate, Quality, Bluray tags if the filename includes "Remux, or Bluray"
 -   Runs in the system tray (Windows only).
+-   Shows Music quality tag from file info.
+-   Preferences box to decide what type of activity and how to display it. 
 
 ## Installation
 

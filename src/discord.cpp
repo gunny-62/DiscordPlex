@@ -436,14 +436,20 @@ json Discord::createActivity(const MediaInfo &info)
 
 			if (lower_filename.find("flac") != std::string::npos)
 			{
+				std::string flac_quality;
 				if (lower_filename.find("44.1") != std::string::npos && lower_filename.find("16") != std::string::npos)
 				{
-					state += " 💿 44.1/16 FLAC";
+					flac_quality = "44.1/16 FLAC";
 				}
 				else if (lower_filename.find("44.1") != std::string::npos && lower_filename.find("24") != std::string::npos)
 				{
-					state += " 💿 44.1/24 FLAC";
+					flac_quality = "44.1/24 FLAC";
 				}
+				else
+				{
+					flac_quality = "FLAC";
+				}
+				state += " 💿 " + flac_quality;
 			}
 		}
 	}
