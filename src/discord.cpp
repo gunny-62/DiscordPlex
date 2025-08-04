@@ -427,6 +427,25 @@ json Discord::createActivity(const MediaInfo &info)
 		activityType = 2;						  // Listening
 		details = info.title;					  // Track Title
 		state = info.artist + " - " + info.album; // Artist - Album
+
+		if (Config::getInstance().getShowFlac())
+		{
+			std::string lower_filename = info.filename;
+			std::transform(lower_filename.begin(), lower_filename.end(), lower_filename.begin(),
+						   [](unsigned char c){ return std::tolower(c); });
+
+			if (lower_filename.find("flac") != std::string::npos)
+			{
+				if (lower_filename.find("44.1") != std::string::npos && lower_filename.find("16") != std::string::npos)
+				{
+					state += " 💿 44.1/16 FLAC";
+				}
+				else if (lower_filename.find("44.1") != std::string::npos && lower_filename.find("24") != std::string::npos)
+				{
+					state += " 💿 44.1/24 FLAC";
+				}
+			}
+		}
 	}
 	else // Unknown or other types
 	{

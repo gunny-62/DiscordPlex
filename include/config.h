@@ -205,6 +205,9 @@ public:
     bool getShowQuality() const;
     void setShowQuality(bool show);
 
+    bool getShowFlac() const;
+    void setShowFlac(bool show);
+
     std::string getEpisodeFormat() const;
     void setEpisodeFormat(const std::string &format);
 
@@ -253,6 +256,7 @@ private:
     bool showTVShows{true};
     bool showBitrate{true};
     bool showQuality{true};
+    bool showFlac{true};
     std::string episodeFormat{"E{episode}"};
     std::string seasonFormat{"S{season}"};
     std::string plexAuthToken;

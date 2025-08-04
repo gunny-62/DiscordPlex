@@ -190,6 +190,7 @@ void Config::loadFromYaml(const YAML::Node &config)
         showTVShows = presence["show_tv_shows"] ? presence["show_tv_shows"].as<bool>() : true;
         showBitrate = presence["show_bitrate"] ? presence["show_bitrate"].as<bool>() : true;
         showQuality = presence["show_quality"] ? presence["show_quality"].as<bool>() : true;
+        showFlac = presence["show_flac"] ? presence["show_flac"].as<bool>() : true;
         episodeFormat = presence["episode_format"] ? presence["episode_format"].as<std::string>() : "E{episode}";
         seasonFormat = presence["season_format"] ? presence["season_format"].as<std::string>() : "S{season}";
     }
@@ -271,6 +272,7 @@ YAML::Node Config::saveToYaml() const
     presence["show_tv_shows"] = showTVShows;
     presence["show_bitrate"] = showBitrate;
     presence["show_quality"] = showQuality;
+    presence["show_flac"] = showFlac;
     presence["episode_format"] = episodeFormat;
     presence["season_format"] = seasonFormat;
     config["presence"] = presence;
@@ -462,6 +464,18 @@ void Config::setShowQuality(bool show)
 {
     std::unique_lock lock(mutex);
     showQuality = show;
+}
+
+bool Config::getShowFlac() const
+{
+    std::shared_lock lock(mutex);
+    return showFlac;
+}
+
+void Config::setShowFlac(bool show)
+{
+    std::unique_lock lock(mutex);
+    showFlac = show;
 }
 
 std::string Config::getEpisodeFormat() const
