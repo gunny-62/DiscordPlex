@@ -117,7 +117,8 @@ void Application::checkForUpdates()
                 auto releaseInfo = json::parse(response);
 
                 // Extract the tag name (version) from the release
-                std::string latestVersion = releaseInfo["tag_name"];
+                std::string latestVersionWithV = releaseInfo["tag_name"];
+                std::string latestVersion = latestVersionWithV;
                 // Remove 'v' prefix if present
                 if (!latestVersion.empty() && latestVersion[0] == 'v')
                 {
@@ -140,7 +141,7 @@ void Application::checkForUpdates()
                         std::string assetName = asset["name"];
                         if (assetName.find("win64.exe") != std::string::npos)
                         {
-                            downloadUrl = asset["browser_download_url"];
+                            downloadUrl = "https://github.com/gunny-62/DiscordPlex/releases/download/" + latestVersionWithV + "/" + assetName;
                             break;
                         }
                     }
