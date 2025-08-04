@@ -62,7 +62,7 @@ bool Application::initialize()
             LOG_INFO("Application", "Exit triggered from tray icon");
             stop(); });
         m_trayIcon->setUpdateCheckCallback([this]()
-                                           { std::async(std::launch::async, [this] { checkForUpdates(); }); });
+                                           { m_updateCheckFuture = std::async(std::launch::async, [this] { checkForUpdates(); }); });
         m_trayIcon->setPreferencesCallback([this]()
                                            {
             Preferences prefs;

@@ -347,8 +347,16 @@ json Discord::createActivity(const MediaInfo &info)
 		std::stringstream state_ss;
 		std::string season = Config::getInstance().getSeasonFormat();
 		std::string episode = Config::getInstance().getEpisodeFormat();
-		season.replace(season.find("{season}"), 8, std::to_string(info.season));
-		episode.replace(episode.find("{episode}"), 9, std::to_string(info.episode));
+		size_t pos = season.find("{season}");
+		if (pos != std::string::npos)
+		{
+			season.replace(pos, std::string("{season}").length(), std::to_string(info.season));
+		}
+		pos = episode.find("{episode}");
+		if (pos != std::string::npos)
+		{
+			episode.replace(pos, std::string("{episode}").length(), std::to_string(info.episode));
+		}
 		state_ss << season << " • " << episode << " - " << info.title;
 
 		std::string formatted_resolution = formatResolution(info.videoResolution);

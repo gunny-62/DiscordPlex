@@ -3,6 +3,7 @@
 // Standard library headers
 #include <atomic>
 #include <condition_variable>
+#include <future>
 #include <memory>
 #include <mutex>
 
@@ -37,6 +38,7 @@ private:
     std::condition_variable m_discordConnectCv;
     std::mutex m_discordConnectMutex;
     time_t m_lastStartTime = 0;
+    std::future<void> m_updateCheckFuture;
 
     // Helper methods for improved readability
     void setupLogging();
