@@ -55,7 +55,6 @@ INT_PTR CALLBACK PreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
         SendMessage(hMusicCombo, CB_ADDSTRING, 0, (LPARAM) "{title} - {artist} - {album}");
         SendMessage(hMusicCombo, CB_ADDSTRING, 0, (LPARAM) "{title} - {artist}");
         SendMessage(hMusicCombo, CB_ADDSTRING, 0, (LPARAM) "{title}");
-        SendMessage(hMusicCombo, CB_ADDSTRING, 0, (LPARAM) "Gatekeep Mode");
         SendMessage(hMusicCombo, CB_SELECTSTRING, -1, (LPARAM)config.getMusicFormat().c_str());
 
         HWND hTVCombo = GetDlgItem(hDlg, IDC_COMBO_TV_FORMAT);
