@@ -976,6 +976,7 @@ void Plex::extractMusicSpecificInfo(const nlohmann::json &metadata, MediaInfo &i
 {
     info.type = MediaType::Music;
 
+    parseGuid(metadata, info, serverUri, accessToken);
     parseGenres(metadata, info);
 }
 
