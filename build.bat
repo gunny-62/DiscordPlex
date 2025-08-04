@@ -5,6 +5,7 @@ REM Clean up previous build
 if exist build rmdir /s /q build
 if exist release rmdir /s /q release
 if exist include\version.h del include\version.h
+if exist version.txt del version.txt
 
 REM Configure the project
 call cmake -S . -B build -G "Visual Studio 17 2022" -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows-static
