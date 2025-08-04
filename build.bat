@@ -28,7 +28,7 @@ if %errorlevel% neq 0 (
 
 REM Create release directory and move the installer
 mkdir release
-for %%F in (build\PresenceForPlex-*-win64.exe) do (
+for %%F in (PresenceForPlex-*-win64.exe) do (
     move "%%F" release\
 )
 
