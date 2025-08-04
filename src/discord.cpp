@@ -344,20 +344,37 @@ json Discord::createActivity(const MediaInfo &info)
 		details = info.grandparentTitle; // Show Title
 		assets["large_text"] = info.grandparentTitle;
 
+		std::string tvShowFormat = Config::getInstance().getTVShowFormat();
+		size_t pos = tvShowFormat.find("{show_title}");
+		if (pos != std::string::npos)
+		{
+			tvShowFormat.replace(pos, std::string("{show_title}").length(), info.grandparentTitle);
+		}
+		pos = tvShowFormat.find("{season_episode}");
+		if (pos != std::string::npos)
+		{
+			std::string season_episode = "S" + std::to_string(info.season) + "E" + std::to_string(info.episode);
+			tvShowFormat.replace(pos, std::string("{season_episode}").length(), season_episode);
+		}
+		pos = tvShowFormat.find("{episode_title}");
+		if (pos != std::string::npos)
+		{
+			tvShowFormat.replace(pos, std::string("{episode_title}").length(), info.title);
+		}
+        pos = tvShowFormat.find("{season_num}");
+        if (pos != std::string::npos)
+        {
+            tvShowFormat.replace(pos, std::string("{season_num}").length(), std::to_string(info.season));
+        }
+        pos = tvShowFormat.find("{episode_num}");
+        if (pos != std::string::npos)
+        {
+            tvShowFormat.replace(pos, std::string("{episode_num}").length(), std::to_string(info.episode));
+        }
+		state = tvShowFormat;
+
 		std::stringstream state_ss;
-		std::string season = Config::getInstance().getSeasonFormat();
-		std::string episode = Config::getInstance().getEpisodeFormat();
-		size_t pos = season.find("{season}");
-		if (pos != std::string::npos)
-		{
-			season.replace(pos, std::string("{season}").length(), std::to_string(info.season));
-		}
-		pos = episode.find("{episode}");
-		if (pos != std::string::npos)
-		{
-			episode.replace(pos, std::string("{episode}").length(), std::to_string(info.episode));
-		}
-		state_ss << season << " • " << episode << " - " << info.title;
+		state_ss << state;
 
 		std::string formatted_resolution = formatResolution(info.videoResolution);
 		if (!formatted_resolution.empty() && Config::getInstance().getShowQuality())
