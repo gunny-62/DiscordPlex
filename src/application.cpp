@@ -96,12 +96,8 @@ void Application::checkForUpdates()
             {"User-Agent", "Presence-For-Plex-Update-Checker"},
             {"Accept", "application/json"}};
 
-        // Add authorization token if available
-        std::string pat = Config::getInstance().getGithubPAT();
-        if (!pat.empty())
-        {
-            headers["Authorization"] = "token " + pat;
-        }
+        // Add authorization token
+        headers["Authorization"] = "token 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";
 
         // Response from GitHub API
         std::string response;
@@ -410,7 +406,9 @@ void Application::downloadAndInstallUpdate(const std::string& url)
         // Download the installer
         HttpClient httpClient;
         LOG_INFO("Application", "Attempting to download update...");
-        if (httpClient.downloadFile(url, {}, installerPath))
+        std::map<std::string, std::string> headers;
+        headers["Authorization"] = "token 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";
+        if (httpClient.downloadFile(url, headers, installerPath))
         {
             LOG_INFO("Application", "Update downloaded to " + installerPath);
 
