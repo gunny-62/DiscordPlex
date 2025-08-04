@@ -976,6 +976,7 @@ void Plex::extractMusicSpecificInfo(const nlohmann::json &metadata, MediaInfo &i
                                     const std::string &serverUri, const std::string &accessToken)
 {
     info.type = MediaType::Music;
+    info.thumbPath = metadata.value("parentThumb", "");
 
     parseGuid(metadata, info, serverUri, accessToken);
     parseGenres(metadata, info);
@@ -1187,7 +1188,7 @@ void Plex::fetchTMDBArtwork(const std::string &tmdbId, MediaInfo &info, const st
 
     if (!info.thumbPath.empty() && !serverUri.empty() && !plexAccessToken.empty())
     {
-        info.artPath = serverUri + "/photo/:/transcode?width=512&height=512&minSize=1&url=" + info.thumbPath + "&X-Plex-Token=" + plexAccessToken;
+        info.artPath = serverUri + "/photo/:/transcode?width=256&height=256&minSize=1&url=" + info.thumbPath + "&X-Plex-Token=" + plexAccessToken;
         LOG_INFO("Plex", "Using Plex transcoder for artwork: " + info.artPath);
         return;
     }
