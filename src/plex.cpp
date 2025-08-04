@@ -9,7 +9,7 @@ namespace
     constexpr const char *PLEX_USER_URL = "https://plex.tv/api/v2/user";
     constexpr const char *PLEX_RESOURCES_URL = "https://plex.tv/api/v2/resources?includeHttps=1";
     constexpr const char *JIKAN_API_URL = "https://api.jikan.moe/v4/anime";
-    constexpr const char *TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
+    constexpr const char *TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w400";
     constexpr const char *SSE_NOTIFICATIONS_ENDPOINT = "/:/eventsource/notifications?filters=playing";
     constexpr const char *SESSION_ENDPOINT = "/status/sessions";
 
