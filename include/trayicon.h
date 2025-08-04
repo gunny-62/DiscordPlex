@@ -18,9 +18,11 @@
 #include "logger.h"
 #include "resources.h"
 #include "thread_utils.h"
+#include <queue>
 
 // Constants for Windows
 #ifdef _WIN32
+#define WM_APP_UPDATE_AVAILABLE (WM_APP + 1)
 #define ID_TRAY_APP_ICON 1000
 #define ID_TRAY_EXIT 1001
 #define ID_TRAY_RELOAD_CONFIG 1002
@@ -57,6 +59,7 @@ public:
     void showNotification(const std::string &title, const std::string &message, bool isError = false);
     void showUpdateNotification(const std::string &title, const std::string &message, const std::string &downloadUrl);
     bool showUpdateConfirmation(const std::string& title, const std::string& message);
+    void postMessage(std::function<void()> task);
 
 private:
     // Windows window procedure
@@ -88,5 +91,9 @@ private:
 
     // Static instance for Windows callback
     static TrayIcon *s_instance;
+
+    // Message queue for thread-safe UI updates
+    std::queue<std::function<void()>> m_messageQueue;
+    std::mutex m_queueMutex;
 };
 #endif

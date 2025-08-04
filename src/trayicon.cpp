@@ -302,6 +302,13 @@ bool TrayIcon::showUpdateConfirmation(const std::string& title, const std::strin
     return result == IDYES;
 }
 
+void TrayIcon::postMessage(std::function<void()> task)
+{
+    std::lock_guard<std::mutex> lock(m_queueMutex);
+    m_messageQueue.push(task);
+    PostMessage(m_hWnd, WM_APP_UPDATE_AVAILABLE, 0, 0);
+}
+
 void TrayIcon::openDownloadUrl()
 {
     if (m_downloadUrl.empty())
@@ -377,6 +384,24 @@ LRESULT CALLBACK TrayIcon::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARA
             LOG_INFO("TrayIcon", "Check for updates selected from menu via WM_COMMAND");
             instance->executeUpdateCheckCallback();
             break;
+        }
+        break;
+
+    case WM_APP_UPDATE_AVAILABLE:
+        {
+            std::function<void()> task;
+            {
+                std::lock_guard<std::mutex> lock(instance->m_queueMutex);
+                if (!instance->m_messageQueue.empty())
+                {
+                    task = instance->m_messageQueue.front();
+                    instance->m_messageQueue.pop();
+                }
+            }
+            if (task)
+            {
+                task();
+            }
         }
         break;
 

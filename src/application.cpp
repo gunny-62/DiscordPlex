@@ -173,14 +173,18 @@ void Application::checkForUpdates()
                 // Show the result as a notification
                 if (updateAvailable)
                 {
-                    if (m_trayIcon->showUpdateConfirmation("Presence For Plex Update", message))
-                    {
-                        downloadAndInstallUpdate(downloadUrl);
-                    }
+                    m_trayIcon->postMessage([this, message, downloadUrl]() {
+                        if (m_trayIcon->showUpdateConfirmation("Presence For Plex Update", message))
+                        {
+                            downloadAndInstallUpdate(downloadUrl);
+                        }
+                    });
                 }
                 else
                 {
-                    m_trayIcon->showNotification("Presence For Plex Update", message);
+                    m_trayIcon->postMessage([this, message]() {
+                        m_trayIcon->showNotification("Presence For Plex Update", message);
+                    });
                 }
 #endif
             }
