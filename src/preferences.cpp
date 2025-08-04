@@ -50,6 +50,12 @@ INT_PTR CALLBACK PreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
         SendMessage(hSeasonCombo, CB_ADDSTRING, 0, (LPARAM) "S{season_num}");
         SendMessage(hSeasonCombo, CB_SETCURSEL, (WPARAM)0, 0);
 
+        HWND hMusicCombo = GetDlgItem(hDlg, IDC_COMBO_MUSIC_FORMAT);
+        SendMessage(hMusicCombo, CB_ADDSTRING, 0, (LPARAM) "{title} - {artist} - {album}");
+        SendMessage(hMusicCombo, CB_ADDSTRING, 0, (LPARAM) "{title} - {artist}");
+        SendMessage(hMusicCombo, CB_ADDSTRING, 0, (LPARAM) "{title}");
+        SendMessage(hMusicCombo, CB_SETCURSEL, (WPARAM)0, 0);
+
         return (INT_PTR)TRUE;
     }
     case WM_COMMAND:
@@ -76,6 +82,11 @@ INT_PTR CALLBACK PreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
             int seasonIndex = SendMessage(hSeasonCombo, CB_GETCURSEL, 0, 0);
             SendMessage(hSeasonCombo, CB_GETLBTEXT, seasonIndex, (LPARAM)buffer);
             config.setSeasonFormat(buffer);
+
+            HWND hMusicCombo = GetDlgItem(hDlg, IDC_COMBO_MUSIC_FORMAT);
+            int musicIndex = SendMessage(hMusicCombo, CB_GETCURSEL, 0, 0);
+            SendMessage(hMusicCombo, CB_GETLBTEXT, musicIndex, (LPARAM)buffer);
+            config.setMusicFormat(buffer);
 
             config.saveConfig();
             EndDialog(hDlg, LOWORD(wParam));

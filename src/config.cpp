@@ -193,6 +193,7 @@ void Config::loadFromYaml(const YAML::Node &config)
         showFlac = presence["show_flac"] ? presence["show_flac"].as<bool>() : true;
         episodeFormat = presence["episode_format"] ? presence["episode_format"].as<std::string>() : "E{episode}";
         seasonFormat = presence["season_format"] ? presence["season_format"].as<std::string>() : "S{season}";
+        musicFormat = presence["music_format"] ? presence["music_format"].as<std::string>() : "{title} - {artist} - {album}";
     }
 }
 
@@ -275,6 +276,7 @@ YAML::Node Config::saveToYaml() const
     presence["show_flac"] = showFlac;
     presence["episode_format"] = episodeFormat;
     presence["season_format"] = seasonFormat;
+    presence["music_format"] = musicFormat;
     config["presence"] = presence;
 
     return config;
@@ -500,4 +502,16 @@ void Config::setSeasonFormat(const std::string &format)
 {
     std::unique_lock lock(mutex);
     seasonFormat = format;
+}
+
+std::string Config::getMusicFormat() const
+{
+    std::shared_lock lock(mutex);
+    return musicFormat;
+}
+
+void Config::setMusicFormat(const std::string &format)
+{
+    std::unique_lock lock(mutex);
+    musicFormat = format;
 }

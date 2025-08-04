@@ -58,11 +58,24 @@ if not defined INSTALLER_PATH (
 )
 echo Found installer: !INSTALLER_PATH!
 
+REM --- Generate Changelog ---
+echo.
+echo --- Generating changelog... ---
+python generate_changelog.py
+if %errorlevel% neq 0 (
+    echo ERROR: Changelog generation failed. Aborting release.
+    pause
+    exit /b %errorlevel%
+)
+
+set "CHANGELOG_PATH=release_notes\changelog_!VERSION_TAG!.md"
+
 REM --- Create GitHub Release and Upload Asset ---
 echo.
 echo --- Creating GitHub release and uploading installer... ---
-gh release create "%VERSION_TAG%" --repo "%GITHUB_REPO%" --title "Release %VERSION_TAG%" --notes "New release."
+gh release create "%VERSION_TAG%" --repo "%GITHUB_REPO%" --title "Release %VERSION_TAG%" --notes-file "!CHANGELOG_PATH!"
 if %errorlevel% neq 0 (
+>>>>>>> Stashed changes
     echo ERROR: GitHub release creation failed.
     pause
     exit /b %errorlevel%
