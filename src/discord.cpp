@@ -326,9 +326,15 @@ json Discord::createActivity(const MediaInfo &info)
 	int activityType = 3; // Default: Watching
 
 	// Default large image
-	assets["large_image"] = "plex_logo";
+	assets["large_image"] = "plexlogo1024";
 
-	if (!info.artPath.empty())
+	if (Config::getInstance().getGatekeepMusic())
+	{
+		std::vector<std::string> art = {"gate1", "gate2", "gate3", "gate4"};
+		int randomIndex = rand() % art.size();
+		assets["large_image"] = art[randomIndex];
+	}
+	else if (!info.artPath.empty())
 	{
 		assets["large_image"] = info.artPath;
 		LOG_INFO("Discord", "Using artwork URL: " + info.artPath);
@@ -521,7 +527,7 @@ json Discord::createActivity(const MediaInfo &info)
 	}
 	else if (info.state == PlaybackState::Paused)
 	{
-		assets["small_image"] = "paused";
+		assets["small_image"] = "pause1024";
 		assets["small_text"] = "Paused";
 		// Keep existing details and state
 	}

@@ -260,7 +260,7 @@ private:
 
     // Configuration values
     std::atomic<int> logLevel{1};
-    std::atomic<uint64_t> discordClientId{1359742002618564618};
+    std::atomic<uint64_t> discordClientId{1402058094103761007};
 
     // Complex types need mutex protection
     bool showMusic{true};
