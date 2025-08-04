@@ -41,6 +41,10 @@ public:
               const std::string &body,
               std::string &response);
 
+    bool downloadFile(const std::string &url,
+                      const std::map<std::string, std::string> &headers,
+                      const std::string &outputPath);
+
     // Server-Sent Events (SSE)
     bool startSSE(const std::string &url,
                   const std::map<std::string, std::string> &headers,

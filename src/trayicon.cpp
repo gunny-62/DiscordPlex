@@ -278,6 +278,30 @@ void TrayIcon::showUpdateNotification(const std::string &title, const std::strin
     showNotification(title, message, false);
 }
 
+bool TrayIcon::showUpdateConfirmation(const std::string& title, const std::string& message)
+{
+    std::wstring wTitle, wMessage;
+    int titleLength = MultiByteToWideChar(CP_UTF8, 0, title.c_str(), -1, NULL, 0);
+    int messageLength = MultiByteToWideChar(CP_UTF8, 0, message.c_str(), -1, NULL, 0);
+
+    if (titleLength > 0 && messageLength > 0)
+    {
+        wTitle.resize(titleLength);
+        wMessage.resize(messageLength);
+
+        MultiByteToWideChar(CP_UTF8, 0, title.c_str(), -1, &wTitle[0], titleLength);
+        MultiByteToWideChar(CP_UTF8, 0, message.c_str(), -1, &wMessage[0], messageLength);
+    }
+    else
+    {
+        LOG_ERROR("TrayIcon", "Failed to convert confirmation text to wide string");
+        return false;
+    }
+
+    int result = MessageBoxW(m_hWnd, wMessage.c_str(), wTitle.c_str(), MB_YESNO | MB_ICONQUESTION);
+    return result == IDYES;
+}
+
 void TrayIcon::openDownloadUrl()
 {
     if (m_downloadUrl.empty())

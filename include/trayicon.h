@@ -56,6 +56,7 @@ public:
     void setUpdateCheckCallback(std::function<void()> callback);
     void showNotification(const std::string &title, const std::string &message, bool isError = false);
     void showUpdateNotification(const std::string &title, const std::string &message, const std::string &downloadUrl);
+    bool showUpdateConfirmation(const std::string& title, const std::string& message);
 
 private:
     // Windows window procedure

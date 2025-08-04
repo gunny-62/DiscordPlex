@@ -140,6 +140,40 @@ bool HttpClient::post(const std::string &url, const std::map<std::string, std::s
     return success;
 }
 
+bool HttpClient::downloadFile(const std::string &url, const std::map<std::string, std::string> &headers, const std::string &outputPath)
+{
+    LOG_INFO_STREAM("HttpClient", "Downloading file from: " << url << " to " << outputPath);
+
+    if (!setupCommonOptions(url, headers))
+    {
+        return false;
+    }
+
+    FILE* fp = fopen(outputPath.c_str(), "wb");
+    if (!fp) {
+        LOG_ERROR("HttpClient", "Failed to open file for writing: " + outputPath);
+        return false;
+    }
+
+    curl_easy_setopt(m_curl, CURLOPT_WRITEFUNCTION, fwrite);
+    curl_easy_setopt(m_curl, CURLOPT_WRITEDATA, fp);
+
+    struct curl_slist *curl_headers = createHeaderList(headers);
+    curl_easy_setopt(m_curl, CURLOPT_HTTPHEADER, curl_headers);
+
+    LOG_DEBUG("HttpClient", "Executing download request");
+    CURLcode res = curl_easy_perform(m_curl);
+    curl_slist_free_all(curl_headers);
+    fclose(fp);
+
+    bool success = checkResponse(res);
+    if (success)
+    {
+        LOG_DEBUG_STREAM("HttpClient", "File download succeeded.");
+    }
+    return success;
+}
+
 size_t HttpClient::sseCallback(char *ptr, size_t size, size_t nmemb, void *userdata)
 {
     HttpClient *client = static_cast<HttpClient *>(userdata);

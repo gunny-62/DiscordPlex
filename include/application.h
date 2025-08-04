@@ -45,4 +45,5 @@ private:
     void processPlaybackInfo(const MediaInfo &info);
     void performCleanup();
     void checkForUpdates();
+    void downloadAndInstallUpdate(const std::string& url);
 };

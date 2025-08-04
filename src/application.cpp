@@ -134,14 +134,32 @@ void Application::checkForUpdates()
 
                 if (updateAvailable)
                 {
-                    message = "An update is available!\n";
-                    message += "Latest version: " + latestVersion + " (current: " + currentVersion + ")\n\n";
+                    // Find the download URL for the win64.exe file
+                    for (const auto& asset : releaseInfo["assets"])
+                    {
+                        std::string assetName = asset["name"];
+                        if (assetName.find("win64.exe") != std::string::npos)
+                        {
+                            downloadUrl = asset["browser_download_url"];
+                            break;
+                        }
+                    }
 
-                    // Add download URL or update instructions
-                    downloadUrl = releaseInfo["html_url"];
-                    message += "Click to open the download page.";
-
-                    LOG_INFO("Application", "Update available: " + latestVersion);
+                    if (!downloadUrl.empty())
+                    {
+                        message = "An update is available!\n";
+                        message += "Latest version: " + latestVersion + " (current: " + currentVersion + ")\n\n";
+                        message += "Click to automatically download and install the update.";
+                        LOG_INFO("Application", "Update available: " + latestVersion + " at " + downloadUrl);
+                    }
+                    else
+                    {
+                        message = "An update is available, but the download link could not be found.\n";
+                        message += "Latest version: " + latestVersion + " (current: " + currentVersion + ")\n\n";
+                        message += "Please visit the GitHub releases page to update manually.";
+                        downloadUrl = releaseInfo["html_url"];
+                        LOG_WARNING("Application", "Update available but no installer found.");
+                    }
                 }
                 else
                 {
@@ -155,7 +173,10 @@ void Application::checkForUpdates()
                 // Show the result as a notification
                 if (updateAvailable)
                 {
-                    m_trayIcon->showUpdateNotification("Presence For Plex Update", message, downloadUrl);
+                    if (m_trayIcon->showUpdateConfirmation("Presence For Plex Update", message))
+                    {
+                        downloadAndInstallUpdate(downloadUrl);
+                    }
                 }
                 else
                 {
@@ -368,4 +389,44 @@ void Application::stop()
     // Wake up thread waiting for Discord connection if we're in that state
     std::unique_lock<std::mutex> lock(m_discordConnectMutex);
     m_discordConnectCv.notify_all();
+}
+
+void Application::downloadAndInstallUpdate(const std::string& url)
+{
+    LOG_INFO("Application", "Downloading update from " + url);
+
+    try
+    {
+        // Get temp path
+        char tempPath[MAX_PATH];
+        GetTempPath(MAX_PATH, tempPath);
+        std::string installerPath = std::string(tempPath) + "PresenceForPlex-update.exe";
+
+        // Download the installer
+        HttpClient httpClient;
+        if (httpClient.downloadFile(url, {}, installerPath))
+        {
+            LOG_INFO("Application", "Update downloaded to " + installerPath);
+
+            // Run the installer
+            ShellExecute(NULL, "open", installerPath.c_str(), NULL, NULL, SW_SHOWNORMAL);
+
+            // Close the current application
+            stop();
+        }
+        else
+        {
+            LOG_ERROR("Application", "Failed to download update");
+#ifdef _WIN32
+            m_trayIcon->showNotification("Update Failed", "Could not download the update.", true);
+#endif
+        }
+    }
+    catch (const std::exception& e)
+    {
+        LOG_ERROR("Application", "Exception during update download: " + std::string(e.what()));
+#ifdef _WIN32
+        m_trayIcon->showNotification("Update Failed", "An error occurred while downloading the update.", true);
+#endif
+    }
 }
