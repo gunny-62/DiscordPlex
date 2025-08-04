@@ -469,24 +469,7 @@ json Discord::createActivity(const MediaInfo &info)
 		else
 		{
 			details = info.title; // Track Title
-			std::string musicFormat = Config::getInstance().getMusicFormat();
-
-			size_t pos = musicFormat.find("{title}");
-			if (pos != std::string::npos)
-			{
-				musicFormat.replace(pos, std::string("{title}").length(), info.title);
-			}
-			pos = musicFormat.find("{artist}");
-			if (pos != std::string::npos)
-			{
-				musicFormat.replace(pos, std::string("{artist}").length(), info.artist);
-			}
-			pos = musicFormat.find("{album}");
-			if (pos != std::string::npos)
-			{
-				musicFormat.replace(pos, std::string("{album}").length(), info.album);
-			}
-			state = musicFormat;
+			state = info.artist + " - " + info.album;
 		}
 
 		if (Config::getInstance().getShowFlac())
