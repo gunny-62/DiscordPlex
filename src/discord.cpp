@@ -463,7 +463,15 @@ json Discord::createActivity(const MediaInfo &info)
 
 		if (Config::getInstance().getGatekeepMusic())
 		{
-			details = "Listening to something..";
+			std::string customTitle = Config::getInstance().getGatekeepMusicTitle();
+			if (customTitle.empty())
+			{
+				details = "🎶 Listening to something...";
+			}
+			else
+			{
+				details = customTitle;
+			}
 			state = "In";
 		}
 		else

@@ -211,6 +211,9 @@ public:
     bool getGatekeepMusic() const;
     void setGatekeepMusic(bool gatekeep);
 
+    std::string getGatekeepMusicTitle() const;
+    void setGatekeepMusicTitle(const std::string &title);
+
     std::string getEpisodeFormat() const;
     void setEpisodeFormat(const std::string &format);
 
@@ -267,6 +270,7 @@ private:
     bool showQuality{true};
     bool showFlac{true};
     bool gatekeepMusic{false};
+    std::string gatekeepMusicTitle;
     std::string episodeFormat{"E{episode}"};
     std::string seasonFormat{"S{season}"};
     std::string musicFormat{"{title} - {artist} - {album}"};

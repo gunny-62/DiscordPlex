@@ -34,6 +34,8 @@ INT_PTR CALLBACK PreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
         Config &config = Config::getInstance();
         CheckDlgButton(hDlg, IDC_CHECK_SHOW_MUSIC, config.getShowMusic() ? BST_CHECKED : BST_UNCHECKED);
         CheckDlgButton(hDlg, IDC_CHECK_GATEKEEP_MUSIC, config.getGatekeepMusic() ? BST_CHECKED : BST_UNCHECKED);
+        SetDlgItemText(hDlg, IDC_EDIT_GATEKEEP_MUSIC_TITLE, config.getGatekeepMusicTitle().c_str());
+        EnableWindow(GetDlgItem(hDlg, IDC_EDIT_GATEKEEP_MUSIC_TITLE), config.getGatekeepMusic());
         CheckDlgButton(hDlg, IDC_CHECK_SHOW_FLAC, config.getShowFlac() ? BST_CHECKED : BST_UNCHECKED);
         CheckDlgButton(hDlg, IDC_CHECK_SHOW_MOVIES, config.getShowMovies() ? BST_CHECKED : BST_UNCHECKED);
         CheckDlgButton(hDlg, IDC_CHECK_SHOW_TVSHOWS, config.getShowTVShows() ? BST_CHECKED : BST_UNCHECKED);
@@ -71,18 +73,26 @@ INT_PTR CALLBACK PreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
     {
         switch (LOWORD(wParam))
         {
+        case IDC_CHECK_GATEKEEP_MUSIC:
+        {
+            BOOL isChecked = IsDlgButtonChecked(hDlg, IDC_CHECK_GATEKEEP_MUSIC);
+            EnableWindow(GetDlgItem(hDlg, IDC_EDIT_GATEKEEP_MUSIC_TITLE), isChecked);
+            break;
+        }
         case IDC_BUTTON_SAVE:
         {
             Config &config = Config::getInstance();
             config.setShowMusic(IsDlgButtonChecked(hDlg, IDC_CHECK_SHOW_MUSIC) == BST_CHECKED);
             config.setGatekeepMusic(IsDlgButtonChecked(hDlg, IDC_CHECK_GATEKEEP_MUSIC) == BST_CHECKED);
+            char buffer[256];
+            GetDlgItemText(hDlg, IDC_EDIT_GATEKEEP_MUSIC_TITLE, buffer, 256);
+            config.setGatekeepMusicTitle(buffer);
             config.setShowFlac(IsDlgButtonChecked(hDlg, IDC_CHECK_SHOW_FLAC) == BST_CHECKED);
             config.setShowMovies(IsDlgButtonChecked(hDlg, IDC_CHECK_SHOW_MOVIES) == BST_CHECKED);
             config.setShowTVShows(IsDlgButtonChecked(hDlg, IDC_CHECK_SHOW_TVSHOWS) == BST_CHECKED);
             config.setShowBitrate(IsDlgButtonChecked(hDlg, IDC_CHECK_SHOW_BITRATE) == BST_CHECKED);
             config.setShowQuality(IsDlgButtonChecked(hDlg, IDC_CHECK_SHOW_QUALITY) == BST_CHECKED);
 
-            char buffer[256];
             HWND hEpisodeCombo = GetDlgItem(hDlg, IDC_EDIT_EPISODE_FORMAT);
             int episodeIndex = SendMessage(hEpisodeCombo, CB_GETCURSEL, 0, 0);
             SendMessage(hEpisodeCombo, CB_GETLBTEXT, episodeIndex, (LPARAM)buffer);
