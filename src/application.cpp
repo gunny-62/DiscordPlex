@@ -1,5 +1,6 @@
 #include "application.h"
 #include "version.h"
+#include "preferences.h"
 
 Application::Application()
 {
@@ -62,6 +63,10 @@ bool Application::initialize()
             stop(); });
         m_trayIcon->setUpdateCheckCallback([this]()
                                            { std::async(std::launch::async, [this] { checkForUpdates(); }); });
+        m_trayIcon->setPreferencesCallback([this]()
+                                           {
+            Preferences prefs;
+            prefs.show(); });
         m_trayIcon->show();
 #endif
 

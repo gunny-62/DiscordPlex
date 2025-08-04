@@ -336,21 +336,29 @@ json Discord::createActivity(const MediaInfo &info)
 
 	if (info.type == MediaType::TVShow)
 	{
+		if (!Config::getInstance().getShowTVShows())
+		{
+			return {};
+		}
 		activityType = 3; // Watching
 		details = info.grandparentTitle; // Show Title
 		assets["large_text"] = info.grandparentTitle;
 
 		std::stringstream state_ss;
-		state_ss << "S" << info.season << " • E" << info.episode << " - " << info.title;
+		std::string season = Config::getInstance().getSeasonFormat();
+		std::string episode = Config::getInstance().getEpisodeFormat();
+		season.replace(season.find("{season}"), 8, std::to_string(info.season));
+		episode.replace(episode.find("{episode}"), 9, std::to_string(info.episode));
+		state_ss << season << " • " << episode << " - " << info.title;
 
 		std::string formatted_resolution = formatResolution(info.videoResolution);
-		if (!formatted_resolution.empty())
+		if (!formatted_resolution.empty() && Config::getInstance().getShowQuality())
 		{
 			state_ss << " • " << formatted_resolution;
 		}
 
 		std::string formatted_bitrate = formatBitrate(info.bitrate);
-		if (!formatted_bitrate.empty())
+		if (!formatted_bitrate.empty() && Config::getInstance().getShowBitrate())
 		{
 			state_ss << " • " << formatted_bitrate;
 		}
@@ -368,19 +376,23 @@ json Discord::createActivity(const MediaInfo &info)
 	}
 	else if (info.type == MediaType::Movie)
 	{
+		if (!Config::getInstance().getShowMovies())
+		{
+			return {};
+		}
 		activityType = 3; // Watching
 		details = info.title + " (" + std::to_string(info.year) + ")";
 		assets["large_text"] = info.title;
 
 		std::stringstream state_ss;
 		std::string formatted_resolution = formatResolution(info.videoResolution);
-		if (!formatted_resolution.empty())
+		if (!formatted_resolution.empty() && Config::getInstance().getShowQuality())
 		{
 			state_ss << formatted_resolution;
 		}
 
 		std::string formatted_bitrate = formatBitrate(info.bitrate);
-		if (!formatted_bitrate.empty())
+		if (!formatted_bitrate.empty() && Config::getInstance().getShowBitrate())
 		{
 			if (state_ss.str().length() > 0) { state_ss << " "; }
 			state_ss << formatted_bitrate;
@@ -400,6 +412,10 @@ json Discord::createActivity(const MediaInfo &info)
 	}
 	else if (info.type == MediaType::Music)
 	{
+		if (!Config::getInstance().getShowMusic())
+		{
+			return {};
+		}
 		activityType = 2;						  // Listening
 		details = info.title;					  // Track Title
 		state = info.artist + " - " + info.album; // Artist - Album

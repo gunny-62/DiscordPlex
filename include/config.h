@@ -186,6 +186,31 @@ public:
      */
     std::string getVersionString() const;
 
+    //
+    // Presence settings
+    //
+
+    bool getShowMusic() const;
+    void setShowMusic(bool show);
+
+    bool getShowMovies() const;
+    void setShowMovies(bool show);
+
+    bool getShowTVShows() const;
+    void setShowTVShows(bool show);
+
+    bool getShowBitrate() const;
+    void setShowBitrate(bool show);
+
+    bool getShowQuality() const;
+    void setShowQuality(bool show);
+
+    std::string getEpisodeFormat() const;
+    void setEpisodeFormat(const std::string &format);
+
+    std::string getSeasonFormat() const;
+    void setSeasonFormat(const std::string &format);
+
     /**
      * @brief Get major version number
      * @return Major version component
@@ -223,6 +248,13 @@ private:
     std::atomic<uint64_t> discordClientId{1359742002618564618};
 
     // Complex types need mutex protection
+    bool showMusic{true};
+    bool showMovies{true};
+    bool showTVShows{true};
+    bool showBitrate{true};
+    bool showQuality{true};
+    std::string episodeFormat{"E{episode}"};
+    std::string seasonFormat{"S{season}"};
     std::string plexAuthToken;
     std::string plexClientIdentifier;
     std::string plexUsername;

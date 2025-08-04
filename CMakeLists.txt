@@ -41,8 +41,39 @@ configure_file(
 # Add both project include directories and binary directory to include paths
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_BINARY_DIR})
 
-file(GLOB_RECURSE SOURCES src/*.cpp)
-file(GLOB_RECURSE HEADERS include/*.h)
+set(SOURCES
+    src/application.cpp
+    src/config.cpp
+    src/discord.cpp
+    src/discord_ipc.cpp
+    src/http_client.cpp
+    src/logger.cpp
+    src/main.cpp
+    src/plex.cpp
+    src/preferences.cpp
+    src/single_instance.cpp
+    src/trayicon.cpp
+    src/uuid.cpp
+)
+
+set(HEADERS
+    include/application.h
+    include/config.h
+    include/discord.h
+    include/discord_ipc.h
+    include/http_client.h
+    include/logger.h
+    include/main.h
+    include/models.h
+    include/plex.h
+    include/preferences.h
+    include/resources.h
+    include/single_instance.h
+    include/thread_utils.h
+    include/trayicon.h
+    include/uuid.h
+    include/version.h
+)
 
 # Add resource file for Windows
 if(WIN32)

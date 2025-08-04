@@ -29,6 +29,7 @@
 #define ID_TRAY_OPEN_CONFIG_LOCATION 1003
 #define ID_TRAY_STATUS 1004
 #define ID_TRAY_CHECK_UPDATES 1005
+#define ID_TRAY_PREFERENCES 1006
 #define WM_TRAYICON (WM_USER + 1)
 #endif
 
@@ -56,6 +57,7 @@ public:
     void setExitCallback(std::function<void()> callback);
     void setConnectionStatus(const std::string &status);
     void setUpdateCheckCallback(std::function<void()> callback);
+    void setPreferencesCallback(std::function<void()> callback);
     void showNotification(const std::string &title, const std::string &message, bool isError = false);
     void showUpdateNotification(const std::string &title, const std::string &message, const std::string &downloadUrl);
     bool showUpdateConfirmation(const std::string& title, const std::string& message);
@@ -70,6 +72,7 @@ private:
     void updateMenu();
     void executeExitCallback();
     void executeUpdateCheckCallback();
+    void executePreferencesCallback();
     void openDownloadUrl();
 
     // Window and menu handles
@@ -83,6 +86,7 @@ private:
     std::string m_downloadUrl;
     std::function<void()> m_exitCallback;
     std::function<void()> m_updateCheckCallback;
+    std::function<void()> m_preferencesCallback;
 
     // Thread management
     std::atomic<bool> m_running;

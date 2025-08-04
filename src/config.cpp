@@ -180,6 +180,19 @@ void Config::loadFromYaml(const YAML::Node &config)
     {
         githubPAT = config["github_pat"].as<std::string>();
     }
+
+    // Presence settings
+    if (config["presence"])
+    {
+        const auto &presence = config["presence"];
+        showMusic = presence["show_music"] ? presence["show_music"].as<bool>() : true;
+        showMovies = presence["show_movies"] ? presence["show_movies"].as<bool>() : true;
+        showTVShows = presence["show_tv_shows"] ? presence["show_tv_shows"].as<bool>() : true;
+        showBitrate = presence["show_bitrate"] ? presence["show_bitrate"].as<bool>() : true;
+        showQuality = presence["show_quality"] ? presence["show_quality"].as<bool>() : true;
+        episodeFormat = presence["episode_format"] ? presence["episode_format"].as<std::string>() : "E{episode}";
+        seasonFormat = presence["season_format"] ? presence["season_format"].as<std::string>() : "S{season}";
+    }
 }
 
 // Version information
@@ -250,6 +263,17 @@ YAML::Node Config::saveToYaml() const
 
     // GitHub PAT
     config["github_pat"] = githubPAT;
+
+    // Presence settings
+    YAML::Node presence;
+    presence["show_music"] = showMusic;
+    presence["show_movies"] = showMovies;
+    presence["show_tv_shows"] = showTVShows;
+    presence["show_bitrate"] = showBitrate;
+    presence["show_quality"] = showQuality;
+    presence["episode_format"] = episodeFormat;
+    presence["season_format"] = seasonFormat;
+    config["presence"] = presence;
 
     return config;
 }
@@ -377,4 +401,89 @@ void Config::setGithubPAT(const std::string &token)
 {
     std::unique_lock lock(mutex);
     githubPAT = token;
+}
+
+// Presence settings
+bool Config::getShowMusic() const
+{
+    std::shared_lock lock(mutex);
+    return showMusic;
+}
+
+void Config::setShowMusic(bool show)
+{
+    std::unique_lock lock(mutex);
+    showMusic = show;
+}
+
+bool Config::getShowMovies() const
+{
+    std::shared_lock lock(mutex);
+    return showMovies;
+}
+
+void Config::setShowMovies(bool show)
+{
+    std::unique_lock lock(mutex);
+    showMovies = show;
+}
+
+bool Config::getShowTVShows() const
+{
+    std::shared_lock lock(mutex);
+    return showTVShows;
+}
+
+void Config::setShowTVShows(bool show)
+{
+    std::unique_lock lock(mutex);
+    showTVShows = show;
+}
+
+bool Config::getShowBitrate() const
+{
+    std::shared_lock lock(mutex);
+    return showBitrate;
+}
+
+void Config::setShowBitrate(bool show)
+{
+    std::unique_lock lock(mutex);
+    showBitrate = show;
+}
+
+bool Config::getShowQuality() const
+{
+    std::shared_lock lock(mutex);
+    return showQuality;
+}
+
+void Config::setShowQuality(bool show)
+{
+    std::unique_lock lock(mutex);
+    showQuality = show;
+}
+
+std::string Config::getEpisodeFormat() const
+{
+    std::shared_lock lock(mutex);
+    return episodeFormat;
+}
+
+void Config::setEpisodeFormat(const std::string &format)
+{
+    std::unique_lock lock(mutex);
+    episodeFormat = format;
+}
+
+std::string Config::getSeasonFormat() const
+{
+    std::shared_lock lock(mutex);
+    return seasonFormat;
+}
+
+void Config::setSeasonFormat(const std::string &format)
+{
+    std::unique_lock lock(mutex);
+    seasonFormat = format;
 }

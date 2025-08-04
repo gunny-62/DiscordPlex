@@ -136,6 +136,11 @@ void TrayIcon::setUpdateCheckCallback(std::function<void()> callback)
     m_updateCheckCallback = callback;
 }
 
+void TrayIcon::setPreferencesCallback(std::function<void()> callback)
+{
+    m_preferencesCallback = callback;
+}
+
 void TrayIcon::executeExitCallback()
 {
     if (m_exitCallback)
@@ -175,6 +180,27 @@ void TrayIcon::executeUpdateCheckCallback()
             },
             std::chrono::seconds(5),
             "Update check callback");
+    }
+}
+
+void TrayIcon::executePreferencesCallback()
+{
+    if (m_preferencesCallback)
+    {
+        // Create a local copy of the callback to avoid potential use-after-free
+        auto preferencesCallback = m_preferencesCallback;
+
+        // Use ThreadUtils to execute the callback with a timeout
+        ThreadUtils::executeWithTimeout(
+            [preferencesCallback]()
+            {
+                if (preferencesCallback)
+                {
+                    preferencesCallback();
+                }
+            },
+            std::chrono::seconds(5),
+            "Preferences callback");
     }
 }
 
@@ -361,6 +387,7 @@ LRESULT CALLBACK TrayIcon::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARA
         instance->m_hMenu = CreatePopupMenu();
         // Status will be added dynamically
         AppendMenuW(instance->m_hMenu, MF_SEPARATOR, 0, NULL); // Add separator
+        AppendMenuW(instance->m_hMenu, MF_STRING, ID_TRAY_PREFERENCES, L"Preferences");
         AppendMenuW(instance->m_hMenu, MF_STRING, ID_TRAY_CHECK_UPDATES, L"Check for Updates");
         AppendMenuW(instance->m_hMenu, MF_SEPARATOR, 0, NULL); // Add separator
         AppendMenuW(instance->m_hMenu, MF_STRING, ID_TRAY_EXIT, L"Exit");
@@ -383,6 +410,10 @@ LRESULT CALLBACK TrayIcon::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARA
         case ID_TRAY_CHECK_UPDATES:
             LOG_INFO("TrayIcon", "Check for updates selected from menu via WM_COMMAND");
             instance->executeUpdateCheckCallback();
+            break;
+        case ID_TRAY_PREFERENCES:
+            LOG_INFO("TrayIcon", "Preferences selected from menu via WM_COMMAND");
+            instance->executePreferencesCallback();
             break;
         }
         break;
@@ -429,6 +460,10 @@ LRESULT CALLBACK TrayIcon::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARA
             case ID_TRAY_CHECK_UPDATES:
                 LOG_INFO("TrayIcon", "Check for updates selected from tray menu");
                 instance->executeUpdateCheckCallback();
+                break;
+            case ID_TRAY_PREFERENCES:
+                LOG_INFO("TrayIcon", "Preferences selected from tray menu");
+                instance->executePreferencesCallback();
                 break;
             }
         }
