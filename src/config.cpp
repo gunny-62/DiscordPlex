@@ -194,6 +194,7 @@ void Config::loadFromYaml(const YAML::Node &config)
         episodeFormat = presence["episode_format"] ? presence["episode_format"].as<std::string>() : "E{episode}";
         seasonFormat = presence["season_format"] ? presence["season_format"].as<std::string>() : "S{season}";
         musicFormat = presence["music_format"] ? presence["music_format"].as<std::string>() : "{title} - {artist} - {album}";
+        tvShowFormat = presence["tv_show_format"] ? presence["tv_show_format"].as<std::string>() : "{show_title} - {season_episode} - {episode_title}";
     }
 }
 
@@ -277,6 +278,7 @@ YAML::Node Config::saveToYaml() const
     presence["episode_format"] = episodeFormat;
     presence["season_format"] = seasonFormat;
     presence["music_format"] = musicFormat;
+    presence["tv_show_format"] = tvShowFormat;
     config["presence"] = presence;
 
     return config;
@@ -514,4 +516,16 @@ void Config::setMusicFormat(const std::string &format)
 {
     std::unique_lock lock(mutex);
     musicFormat = format;
+}
+
+std::string Config::getTVShowFormat() const
+{
+    std::shared_lock lock(mutex);
+    return tvShowFormat;
+}
+
+void Config::setTVShowFormat(const std::string &format)
+{
+    std::unique_lock lock(mutex);
+    tvShowFormat = format;
 }

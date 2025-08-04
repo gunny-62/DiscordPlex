@@ -217,6 +217,9 @@ public:
     std::string getMusicFormat() const;
     void setMusicFormat(const std::string &format);
 
+    std::string getTVShowFormat() const;
+    void setTVShowFormat(const std::string &format);
+
     /**
      * @brief Get major version number
      * @return Major version component
@@ -263,6 +266,7 @@ private:
     std::string episodeFormat{"E{episode}"};
     std::string seasonFormat{"S{season}"};
     std::string musicFormat{"{title} - {artist} - {album}"};
+    std::string tvShowFormat{"{show_title} - {season_episode} - {episode_title}"};
     std::string plexAuthToken;
     std::string plexClientIdentifier;
     std::string plexUsername;

@@ -56,6 +56,12 @@ INT_PTR CALLBACK PreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
         SendMessage(hMusicCombo, CB_ADDSTRING, 0, (LPARAM) "{title}");
         SendMessage(hMusicCombo, CB_SETCURSEL, (WPARAM)0, 0);
 
+        HWND hTVCombo = GetDlgItem(hDlg, IDC_COMBO_TV_FORMAT);
+        SendMessage(hTVCombo, CB_ADDSTRING, 0, (LPARAM) "{show_title} - {season_episode} - {episode_title}");
+        SendMessage(hTVCombo, CB_ADDSTRING, 0, (LPARAM) "{show_title} - {episode_title}");
+        SendMessage(hTVCombo, CB_ADDSTRING, 0, (LPARAM) "{episode_title}");
+        SendMessage(hTVCombo, CB_SETCURSEL, (WPARAM)0, 0);
+
         return (INT_PTR)TRUE;
     }
     case WM_COMMAND:
@@ -87,6 +93,11 @@ INT_PTR CALLBACK PreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
             int musicIndex = SendMessage(hMusicCombo, CB_GETCURSEL, 0, 0);
             SendMessage(hMusicCombo, CB_GETLBTEXT, musicIndex, (LPARAM)buffer);
             config.setMusicFormat(buffer);
+
+            HWND hTVCombo = GetDlgItem(hDlg, IDC_COMBO_TV_FORMAT);
+            int tvIndex = SendMessage(hTVCombo, CB_GETCURSEL, 0, 0);
+            SendMessage(hTVCombo, CB_GETLBTEXT, tvIndex, (LPARAM)buffer);
+            config.setTVShowFormat(buffer);
 
             config.saveConfig();
             EndDialog(hDlg, LOWORD(wParam));
