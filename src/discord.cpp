@@ -462,9 +462,9 @@ json Discord::createActivity(const MediaInfo &info)
 		activityType = 2;						  // Listening
 		details = info.title;					  // Track Title
 		std::string musicFormat = Config::getInstance().getMusicFormat();
-		if (musicFormat == "Gatekeep Mode")
+		if (Config::getInstance().getGatekeepMusic())
 		{
-			details = "";
+			details = "Listening to something...";
 			state = "In";
 		}
 		size_t pos = musicFormat.find("{title}");

@@ -191,6 +191,7 @@ void Config::loadFromYaml(const YAML::Node &config)
         showBitrate = presence["show_bitrate"] ? presence["show_bitrate"].as<bool>() : true;
         showQuality = presence["show_quality"] ? presence["show_quality"].as<bool>() : true;
         showFlac = presence["show_flac"] ? presence["show_flac"].as<bool>() : true;
+        gatekeepMusic = presence["gatekeep_music"] ? presence["gatekeep_music"].as<bool>() : false;
         episodeFormat = presence["episode_format"] ? presence["episode_format"].as<std::string>() : "E{episode}";
         seasonFormat = presence["season_format"] ? presence["season_format"].as<std::string>() : "S{season}";
         musicFormat = presence["music_format"] ? presence["music_format"].as<std::string>() : "{title} - {artist} - {album}";
@@ -275,6 +276,7 @@ YAML::Node Config::saveToYaml() const
     presence["show_bitrate"] = showBitrate;
     presence["show_quality"] = showQuality;
     presence["show_flac"] = showFlac;
+    presence["gatekeep_music"] = gatekeepMusic;
     presence["episode_format"] = episodeFormat;
     presence["season_format"] = seasonFormat;
     presence["music_format"] = musicFormat;
@@ -480,6 +482,18 @@ void Config::setShowFlac(bool show)
 {
     std::unique_lock lock(mutex);
     showFlac = show;
+}
+
+bool Config::getGatekeepMusic() const
+{
+    std::shared_lock lock(mutex);
+    return gatekeepMusic;
+}
+
+void Config::setGatekeepMusic(bool gatekeep)
+{
+    std::unique_lock lock(mutex);
+    gatekeepMusic = gatekeep;
 }
 
 std::string Config::getEpisodeFormat() const
