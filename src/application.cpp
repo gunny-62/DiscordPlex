@@ -101,6 +101,7 @@ void Application::checkForUpdates()
         if (!pat.empty())
         {
             headers["Authorization"] = "token " + pat;
+            LOG_INFO("Application", "Using GitHub PAT for update check");
         }
 
         // Response from GitHub API
@@ -111,6 +112,7 @@ void Application::checkForUpdates()
 
         if (httpClient.get(apiUrl, headers, response))
         {
+            LOG_INFO("Application", "Successfully connected to GitHub API");
             // Parse the JSON response
             try
             {
