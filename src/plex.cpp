@@ -964,6 +964,7 @@ void Plex::extractTVShowSpecificInfo(const nlohmann::json &metadata, MediaInfo &
     info.grandparentTitle = metadata.value("grandparentTitle", "Unknown");
     info.season = metadata.value("parentIndex", 0);
     info.episode = metadata.value("index", 0);
+    info.thumbPath = metadata.value("grandparentThumb", "");
 
     if (metadata.contains("grandparentKey"))
     {
