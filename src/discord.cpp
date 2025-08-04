@@ -369,31 +369,33 @@ json Discord::createActivity(const MediaInfo &info)
 	{
 		activityType = 3; // Watching
 		details = info.title + " (" + std::to_string(info.year) + ")";
-		assets["large_text"] = info.title;
-
-		std::stringstream state_ss;
+		
 		if (!info.genres.empty())
 		{
-			state_ss << std::accumulate(std::next(info.genres.begin()), info.genres.end(),
+			state = std::accumulate(std::next(info.genres.begin()), info.genres.end(),
 									   info.genres[0],
 									   [](std::string a, const std::string &b)
 									   {
 										   return a + ", " + b;
 									   });
 		}
+		else
+		{
+			state = "Watching Movie"; // Fallback state
+		}
 
+		std::stringstream large_text_ss;
 		std::string formatted_resolution = formatResolution(info.videoResolution);
 		if (!formatted_resolution.empty())
 		{
-			if (state_ss.str().length() > 0) { state_ss << " • "; }
-			state_ss << formatted_resolution;
+			large_text_ss << formatted_resolution;
 		}
 
 		std::string formatted_bitrate = formatBitrate(info.bitrate);
 		if (!formatted_bitrate.empty())
 		{
-			if (state_ss.str().length() > 0) { state_ss << " • "; }
-			state_ss << formatted_bitrate;
+			if (large_text_ss.str().length() > 0) { large_text_ss << " "; }
+			large_text_ss << formatted_bitrate;
 		}
 
         // Check for Blu-ray or REMUX in the filename
@@ -403,10 +405,10 @@ json Discord::createActivity(const MediaInfo &info)
 
         if (lower_filename.find("remux") != std::string::npos || lower_filename.find("bluray") != std::string::npos)
         {
-			if (state_ss.str().length() > 0) { state_ss << " • "; }
-            state_ss << "Bluray";
+			if (large_text_ss.str().length() > 0) { large_text_ss << " "; }
+            large_text_ss << "Bluray";
         }
-		state = state_ss.str();
+		assets["large_text"] = large_text_ss.str();
 	}
 	else if (info.type == MediaType::Music)
 	{
