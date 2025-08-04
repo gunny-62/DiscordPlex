@@ -40,7 +40,7 @@ INT_PTR CALLBACK PreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
         CheckDlgButton(hDlg, IDC_CHECK_SHOW_QUALITY, config.getShowQuality() ? BST_CHECKED : BST_UNCHECKED);
         // Episode Format ComboBox
         HWND hEpisodeCombo = GetDlgItem(hDlg, IDC_EDIT_EPISODE_FORMAT);
-        SendMessage(hEpisodeCombo, CB_ADDSTRING, 0, (LPARAM) "E {episode_num}");
+        SendMessage(hEpisodeCombo, CB_ADDSTRING, 0, (LPARAM) "E{episode_num}");
         SendMessage(hEpisodeCombo, CB_ADDSTRING, 0, (LPARAM) "Episode {episode_num}");
         SendMessage(hEpisodeCombo, CB_SELECTSTRING, -1, (LPARAM)config.getEpisodeFormat().c_str());
 
@@ -54,6 +54,7 @@ INT_PTR CALLBACK PreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
         SendMessage(hMusicCombo, CB_ADDSTRING, 0, (LPARAM) "{title} - {artist} - {album}");
         SendMessage(hMusicCombo, CB_ADDSTRING, 0, (LPARAM) "{title} - {artist}");
         SendMessage(hMusicCombo, CB_ADDSTRING, 0, (LPARAM) "{title}");
+        SendMessage(hMusicCombo, CB_ADDSTRING, 0, (LPARAM) "Gatekeep Mode");
         SendMessage(hMusicCombo, CB_SELECTSTRING, -1, (LPARAM)config.getMusicFormat().c_str());
 
         HWND hTVCombo = GetDlgItem(hDlg, IDC_COMBO_TV_FORMAT);
