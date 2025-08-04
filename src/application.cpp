@@ -408,15 +408,27 @@ void Application::downloadAndInstallUpdate(const std::string& url)
 
         // Download the installer
         HttpClient httpClient;
+        LOG_INFO("Application", "Attempting to download update...");
         if (httpClient.downloadFile(url, {}, installerPath))
         {
             LOG_INFO("Application", "Update downloaded to " + installerPath);
 
             // Run the installer
-            ShellExecute(NULL, "open", installerPath.c_str(), NULL, NULL, SW_SHOWNORMAL);
-
-            // Close the current application
-            stop();
+            LOG_INFO("Application", "Attempting to run installer...");
+            INT_PTR result = (INT_PTR)ShellExecute(NULL, "open", installerPath.c_str(), NULL, NULL, SW_SHOWNORMAL);
+            if (result > 32)
+            {
+                LOG_INFO("Application", "Installer launched successfully.");
+                // Close the current application
+                stop();
+            }
+            else
+            {
+                LOG_ERROR("Application", "Failed to launch installer. ShellExecute error code: " + std::to_string(result));
+#ifdef _WIN32
+                m_trayIcon->showNotification("Update Failed", "Could not launch the installer.", true);
+#endif
+            }
         }
         else
         {
