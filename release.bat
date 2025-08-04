@@ -19,6 +19,9 @@ if not defined VERSION_TAG (
 REM --- Write version to file ---
 echo !VERSION_TAG! > version.txt
 
+REM --- Clean build directory ---
+if exist build rmdir /s /q build
+
 REM --- Run the Build Script ---
 echo.
 echo --- Running build script... ---

@@ -328,7 +328,11 @@ json Discord::createActivity(const MediaInfo &info)
 	// Default large image
 	assets["large_image"] = "plex_logo";
 
-	if (!info.artPath.empty())
+	if (!info.thumbPath.empty())
+	{
+		assets["large_image"] = info.thumbPath;
+	}
+	else if (!info.artPath.empty())
 	{
 		assets["large_image"] = info.artPath;
 	}
