@@ -141,7 +141,7 @@ void Application::checkForUpdates()
                         std::string assetName = asset["name"];
                         if (assetName.find("win64.exe") != std::string::npos)
                         {
-                            downloadUrl = "https://github.com/gunny-62/DiscordPlex/releases/download/" + latestVersionWithV + "/" + assetName;
+                            downloadUrl = asset["browser_download_url"];
                             break;
                         }
                     }
