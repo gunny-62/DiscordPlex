@@ -375,7 +375,13 @@ json Discord::createActivity(const MediaInfo &info)
 		pos = tvShowFormat.find("{season_episode}");
 		if (pos != std::string::npos)
 		{
-			tvShowFormat.replace(pos, std::string("{season_episode}").length(), seasonFormat + episodeFormat);
+			tvShowFormat.replace(pos, std::string("{season_episode}").length(), seasonFormat + " " + episodeFormat);
+		}
+
+		pos = tvShowFormat.find("{season}");
+		if (pos != std::string::npos)
+		{
+			tvShowFormat.replace(pos, std::string("{season}").length(), seasonFormat);
 		}
 
 		state = tvShowFormat;
