@@ -50,11 +50,8 @@ if %errorlevel% neq 0 (
 )
 
 REM --- Find the installer file ---
-set "INSTALLER_PATH="
-for %%F in ("PresenceForPlex-*-win64.exe") do (
-    set "INSTALLER_PATH=%%F"
-)
-if not defined INSTALLER_PATH (
+set "INSTALLER_PATH=PresenceForPlex-!VERSION_TAG!-win64.exe"
+if not exist "!INSTALLER_PATH!" (
     echo ERROR: Could not find the installer .exe.
     pause
     exit /b 1
