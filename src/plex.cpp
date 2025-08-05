@@ -987,11 +987,11 @@ void Plex::extractMusicSpecificInfo(const nlohmann::json &metadata, MediaInfo &i
     info.thumbPath = metadata.value("parentThumb", "");
     LOG_INFO("Plex", "Found music thumb path: " + info.thumbPath);
 
-    // Generate Plexamp deep link
-    if (metadata.contains("ratingKey"))
+    // Generate Plex deep link
+    if (!info.artist.empty() && !info.title.empty())
     {
-        info.plexampUrl = "plex://player/track?server=" + info.serverId + "&key=" + metadata.value("ratingKey", "");
-        LOG_INFO("Plex", "Generated Plexamp URL: " + info.plexampUrl);
+        info.plexampUrl = "plex://search?query=" + utils::urlEncode(info.artist + " " + info.title);
+        LOG_INFO("Plex", "Generated Plex URL: " + info.plexampUrl);
     }
 
     if (Config::getInstance().getShowFlacAsCD())
