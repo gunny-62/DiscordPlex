@@ -604,6 +604,11 @@ json Discord::createActivity(const MediaInfo &info)
 		buttons.push_back({{"label", "Search on YouTube"},
 						   {"url", "https://www.youtube.com/results?search_query=" + utils::urlEncode(info.artist + " " + info.title)}});
 	}
+	else if (!info.imdbId.empty())
+	{
+		buttons.push_back({{"label", "View on IMDb"},
+						   {"url", "https://www.imdb.com/title/" + info.imdbId}});
+	}
 	else if (!info.malId.empty())
 	{
 		buttons.push_back({{"label", "View on MyAnimeList"},
