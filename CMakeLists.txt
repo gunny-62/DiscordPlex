@@ -8,7 +8,7 @@ if (POLICY CMP0141)
   set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
 endif()
 
-project ("PresenceForPlex" LANGUAGES CXX)
+project ("Plex" LANGUAGES CXX)
 
 # Read version from file
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/version.txt")
@@ -98,19 +98,19 @@ find_path(_TP_INC
 if(WIN32)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS")
     add_compile_definitions(WIN32_LEAN_AND_MEAN)
-    add_executable(PresenceForPlex WIN32 src/main.cpp ${SOURCES} ${HEADERS} ${RES_FILES})
+    add_executable(Plex WIN32 src/main.cpp ${SOURCES} ${HEADERS} ${RES_FILES})
 else()
-    add_executable(PresenceForPlex src/main.cpp ${SOURCES} ${HEADERS} ${RES_FILES})
+    add_executable(Plex src/main.cpp ${SOURCES} ${HEADERS} ${RES_FILES})
 endif()
 
-target_include_directories(PresenceForPlex PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_link_libraries(PresenceForPlex PRIVATE CURL::libcurl yaml-cpp::yaml-cpp)
+target_include_directories(Plex PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_link_libraries(Plex PRIVATE CURL::libcurl yaml-cpp::yaml-cpp)
 
 if (CMAKE_VERSION VERSION_GREATER 3.25)
-  set_property(TARGET PresenceForPlex PROPERTY CXX_STANDARD 17)
+  set_property(TARGET Plex PROPERTY CXX_STANDARD 17)
 endif()
 
-install(TARGETS PresenceForPlex
+install(TARGETS Plex
     RUNTIME DESTINATION .)         # Root of staging dir
 install(FILES README.md
     DESTINATION .)
@@ -125,35 +125,35 @@ if(WIN32)
     
     # Add option for startup
     set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
-        CreateShortCut \\\"$DESKTOP\\\\Presence For Plex.lnk\\\" \\\"$INSTDIR\\\\PresenceForPlex.exe\\\" 
-        CreateDirectory \\\"$SMPROGRAMS\\\\Presence For Plex\\\" 
-        CreateShortCut \\\"$SMPROGRAMS\\\\Presence For Plex\\\\Presence For Plex.lnk\\\" \\\"$INSTDIR\\\\PresenceForPlex.exe\\\" 
-        WriteRegStr HKCU \\\"Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run\\\" \\\"PresenceForPlex\\\" \\\"$INSTDIR\\\\PresenceForPlex.exe\\\" 
+        CreateShortCut \\\"$DESKTOP\\\\Plex.lnk\\\" \\\"$INSTDIR\\\\Plex.exe\\\" 
+        CreateDirectory \\\"$SMPROGRAMS\\\\Plex\\\" 
+        CreateShortCut \\\"$SMPROGRAMS\\\\Plex\\\\Plex.lnk\\\" \\\"$INSTDIR\\\\Plex.exe\\\" 
+        WriteRegStr HKCU \\\"Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run\\\" \\\"Plex\\\" \\\"$INSTDIR\\\\Plex.exe\\\" 
     ")
     set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "
-        Delete \\\"$DESKTOP\\\\Presence For Plex.lnk\\\" 
-        Delete \\\"$SMPROGRAMS\\\\Presence For Plex\\\\Presence For Plex.lnk\\\" 
-        RMDir \\\"$SMPROGRAMS\\\\Presence For Plex\\\" 
-        DeleteRegValue HKCU \\\"Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run\\\" \\\"PresenceForPlex\\\" 
+        Delete \\\"$DESKTOP\\\\Plex.lnk\\\" 
+        Delete \\\"$SMPROGRAMS\\\\Plex\\\\Plex.lnk\\\" 
+        RMDir \\\"$SMPROGRAMS\\\\Plex\\\" 
+        DeleteRegValue HKCU \\\"Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run\\\" \\\"Plex\\\" 
     ")
     set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
-    set(CPACK_PACKAGE_INSTALL_DIRECTORY "Presence For Plex")
+    set(CPACK_PACKAGE_INSTALL_DIRECTORY "Plex")
 elseif(APPLE)
     set(CPACK_GENERATOR "DragNDrop")
-    set(CPACK_DMG_VOLUME_NAME "PresenceForPlex")
+    set(CPACK_DMG_VOLUME_NAME "Plex")
 elseif(UNIX)
     set(CPACK_GENERATOR "TGZ")
-    set(CPACK_PACKAGE_INSTALL_DIRECTORY "PresenceForPlex")
+    set(CPACK_PACKAGE_INSTALL_DIRECTORY "Plex")
     
     # Install to standard Linux locations
     set(CPACK_SET_DESTDIR ON)
     set(CPACK_INSTALL_PREFIX "/usr")
 endif()
 
-set(CPACK_PACKAGE_NAME "PresenceForPlex")
+set(CPACK_PACKAGE_NAME "Plex")
 set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
 set(CPACK_PACKAGE_VENDOR "Eric")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Discord Rich Presence for Plex")
-set(CPACK_PACKAGE_EXECUTABLES "PresenceForPlex" "Presence For Plex")
+set(CPACK_PACKAGE_EXECUTABLES "Plex" "Plex")
 
 include(CPack)
