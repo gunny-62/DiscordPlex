@@ -9,7 +9,10 @@ def get_version_from_file():
 
 def get_git_log(previous_tag):
     try:
-        command = ['git', 'log', f'{previous_tag}..HEAD', '--pretty=format:%s']
+        if previous_tag:
+            command = ['git', 'log', f'{previous_tag}..HEAD', '--pretty=format:%s']
+        else:
+            command = ['git', 'log', '--pretty=format:%s']
         result = subprocess.run(command, capture_output=True, text=True, check=True)
         return result.stdout.splitlines()
     except subprocess.CalledProcessError as e:

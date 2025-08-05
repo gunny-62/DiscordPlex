@@ -21,6 +21,7 @@ echo !VERSION_TAG! > version.txt
 
 REM --- Clean build directory ---
 if exist build rmdir /s /q build
+if exist "build(1)" rmdir /s /q "build(1)"
 
 REM --- Run the Build Script ---
 echo.
