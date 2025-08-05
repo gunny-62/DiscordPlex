@@ -594,7 +594,7 @@ json Discord::createActivity(const MediaInfo &info)
 	json buttons = {};
 
 	// Add relevant buttons based on available IDs
-	if (info.type == MediaType::Music)
+	if (info.type == MediaType::Music && !Config::getInstance().getGatekeepMusic())
 	{
 		if (!info.plexampUrl.empty())
 		{
@@ -625,7 +625,7 @@ json Discord::createActivity(const MediaInfo &info)
 		{"name", "Plex"},
 		{"state", state},
 		{"details", details},
-		//{"timestamps", timestamps}, // Only add if valid
+		{"timestamps", timestamps},
 		{"assets", assets},
 		{"instance", true}};
 
