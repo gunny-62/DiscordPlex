@@ -37,7 +37,10 @@ echo.
 echo --- Committing and pushing changes to GitHub... ---
 git add .
 git commit -m "Release %VERSION_TAG%"
-git tag "%VERSION_TAG%"
+git tag "%VERSION_TAG%" >nul 2>&1
+if errorlevel 1 (
+    echo "Tag %VERSION_TAG% already exists, skipping."
+)
 git push
 git push --tags
 if %errorlevel% neq 0 (
