@@ -51,7 +51,7 @@ if %errorlevel% neq 0 (
 
 REM --- Find the installer file ---
 set "INSTALLER_PATH="
-for %%F in ("release\PresenceForPlex-*-win64.exe") do (
+for %%F in ("release\Plex-*-win64.exe") do (
     set "INSTALLER_PATH=%%F"
 )
 if not defined INSTALLER_PATH (
