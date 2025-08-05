@@ -359,8 +359,7 @@ json Discord::createActivity(const MediaInfo &info)
 			return {};
 		}
 		activityType = 3; // Watching
-		details = "Watching something";
-		state = info.grandparentTitle; // Show Title
+		details = info.grandparentTitle; // Show Title
 		assets["large_text"] = info.grandparentTitle;
 
 		std::string tvShowFormat = Config::getInstance().getTVShowFormat();
@@ -443,8 +442,7 @@ json Discord::createActivity(const MediaInfo &info)
 			return {};
 		}
 		activityType = 3; // Watching
-		details = "Watching something";
-		state = info.title + " (" + std::to_string(info.year) + ")";
+		details = info.title + " (" + std::to_string(info.year) + ")";
 		assets["large_text"] = info.title;
 
 		std::stringstream state_ss;
@@ -496,8 +494,8 @@ json Discord::createActivity(const MediaInfo &info)
 		}
 		else
 		{
-			details = "Music";
-			state = info.title + " - " + info.artist + " - " + info.album;
+			details = info.title; // Track Title
+			state = info.artist + " - " + info.album;
 		}
 
 		if (Config::getInstance().getShowFlac())
@@ -609,6 +607,7 @@ json Discord::createActivity(const MediaInfo &info)
 
 	json ret = {
 		{"type", activityType},
+		{"name", "Plex"},
 		{"state", state},
 		{"details", details},
 		//{"timestamps", timestamps}, // Only add if valid
