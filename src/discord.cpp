@@ -1,4 +1,6 @@
 #include "discord.h"
+#include <cstdlib>
+#include <ctime>
 
 constexpr int MAX_PAUSED_DURATION = 9999;
 
@@ -22,6 +24,7 @@ Discord::Discord() : running(false),
 					 has_queued_frame(false),
 					 last_frame_write_time(0)
 {
+	srand(time(NULL));
 }
 
 Discord::~Discord()
