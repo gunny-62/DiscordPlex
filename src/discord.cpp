@@ -337,7 +337,7 @@ json Discord::createActivity(const MediaInfo &info)
 		int randomIndex = rand() % art.size();
 		assets["large_image"] = art[randomIndex];
 	}
-	else if (!info.artPath.empty())
+	else if (!info.artPath.empty() && info.type != MediaType::Music)
 	{
 		assets["large_image"] = info.artPath;
 		LOG_INFO("Discord", "Using artwork URL: " + info.artPath);
