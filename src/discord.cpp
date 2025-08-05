@@ -325,7 +325,6 @@ json Discord::createActivity(const MediaInfo &info)
 {
 	std::string state;
 	std::string details;
-	std::string name;
 	json assets = {};
 	int activityType = 3; // Default: Watching
 
@@ -360,8 +359,8 @@ json Discord::createActivity(const MediaInfo &info)
 			return {};
 		}
 		activityType = 3; // Watching
-		name = "Watching a tv show";
-		details = info.grandparentTitle; // Show Title
+		details = "Watching something";
+		state = info.grandparentTitle; // Show Title
 		assets["large_text"] = info.grandparentTitle;
 
 		std::string tvShowFormat = Config::getInstance().getTVShowFormat();
@@ -444,8 +443,8 @@ json Discord::createActivity(const MediaInfo &info)
 			return {};
 		}
 		activityType = 3; // Watching
-		name = "Watching a movie";
-		details = info.title + " (" + std::to_string(info.year) + ")";
+		details = "Watching something";
+		state = info.title + " (" + std::to_string(info.year) + ")";
 		assets["large_text"] = info.title;
 
 		std::stringstream state_ss;
@@ -481,7 +480,6 @@ json Discord::createActivity(const MediaInfo &info)
 			return {};
 		}
 		activityType = 2; // Listening
-		name = "Listening to music";
 
 		if (Config::getInstance().getGatekeepMusic())
 		{
@@ -498,8 +496,8 @@ json Discord::createActivity(const MediaInfo &info)
 		}
 		else
 		{
-			details = info.title; // Track Title
-			state = info.artist + " - " + info.album;
+			details = "Music";
+			state = info.title + " - " + info.artist + " - " + info.album;
 		}
 
 		if (Config::getInstance().getShowFlac())
@@ -611,7 +609,6 @@ json Discord::createActivity(const MediaInfo &info)
 
 	json ret = {
 		{"type", activityType},
-		{"name", name},
 		{"state", state},
 		{"details", details},
 		//{"timestamps", timestamps}, // Only add if valid
