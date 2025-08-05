@@ -125,10 +125,10 @@ if(WIN32)
     
     # Add option for startup
     set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
-        CreateShortCut \\\"$DESKTOP\\\\Presence For Plex.lnk\\\" \\\"$INSTDIR\\\\PresenceForPlex.exe\\\" 
-        CreateDirectory \\\"$SMPROGRAMS\\\\Presence For Plex\\\" 
-        CreateShortCut \\\"$SMPROGRAMS\\\\Presence For Plex\\\\Presence For Plex.lnk\\\" \\\"$INSTDIR\\\\PresenceForPlex.exe\\\" 
-        WriteRegStr HKCU \\\"Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run\\\" \\\"PresenceForPlex\\\" \\\"$INSTDIR\\\\PresenceForPlex.exe\\\" 
+        CreateShortCut \\\"$DESKTOP\\\\Plex.lnk\\\" \\\"$INSTDIR\\\\Plex.exe\\\" 
+        CreateDirectory \\\"$SMPROGRAMS\\\\Plex\\\" 
+        CreateShortCut \\\"$SMPROGRAMS\\\\Plex\\\\Plex.lnk\\\" \\\"$INSTDIR\\\\Plex.exe\\\" 
+        WriteRegStr HKCU \\\"Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run\\\" \\\"Plex\\\" \\\"$INSTDIR\\\\Plex.exe\\\" 
     ")
     set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "
         Delete \\\"$DESKTOP\\\\Plex.lnk\\\" 
@@ -140,7 +140,7 @@ if(WIN32)
     set(CPACK_PACKAGE_INSTALL_DIRECTORY "Plex")
 elseif(APPLE)
     set(CPACK_GENERATOR "DragNDrop")
-    set(CPACK_DMG_VOLUME_NAME "PresenceForPlex")
+    set(CPACK_DMG_VOLUME_NAME "Plex")
 elseif(UNIX)
     set(CPACK_GENERATOR "TGZ")
     set(CPACK_PACKAGE_INSTALL_DIRECTORY "Plex")

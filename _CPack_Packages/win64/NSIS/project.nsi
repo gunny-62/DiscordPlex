@@ -741,10 +741,10 @@ Section "-Core installation"
   !insertmacro MUI_STARTMENU_WRITE_END
 
 
-        CreateShortCut "$DESKTOP\Presence For Plex.lnk" "$INSTDIR\PresenceForPlex.exe" 
-        CreateDirectory "$SMPROGRAMS\Presence For Plex" 
-        CreateShortCut "$SMPROGRAMS\Presence For Plex\Presence For Plex.lnk" "$INSTDIR\PresenceForPlex.exe" 
-        WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "PresenceForPlex" "$INSTDIR\PresenceForPlex.exe" 
+        CreateShortCut "$DESKTOP\Plex.lnk" "$INSTDIR\Plex.exe" 
+        CreateDirectory "$SMPROGRAMS\Plex" 
+        CreateShortCut "$SMPROGRAMS\Plex\Plex.lnk" "$INSTDIR\Plex.exe" 
+        WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "Plex" "$INSTDIR\Plex.exe" 
     
 
 SectionEnd
