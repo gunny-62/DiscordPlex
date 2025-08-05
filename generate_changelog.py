@@ -14,16 +14,20 @@ def get_git_log(previous_tag):
         else:
             command = ['git', 'log', '--pretty=format:%s']
         result = subprocess.run(command, capture_output=True, text=True, check=True)
-        return result.stdout.splitlines()
+        commits = result.stdout.splitlines()
+        # Filter out release commits
+        return [commit for commit in commits if not commit.lower().startswith('release ')]
     except subprocess.CalledProcessError as e:
         print(f"Error getting git log: {e}", file=sys.stderr)
         return []
 
 def get_tags():
     try:
-        command = ['git', 'tag', '--sort=-v:refname']
+        command = ['git', 'tag']
         result = subprocess.run(command, capture_output=True, text=True, check=True)
         tags = result.stdout.splitlines()
+        # Custom sort to handle 'v' prefix and semantic versioning
+        tags.sort(key=lambda tag: [int(c) for c in tag.lstrip('v').split('.')], reverse=True)
         return tags
     except subprocess.CalledProcessError as e:
         print(f"Error getting git tags: {e}", file=sys.stderr)
@@ -46,15 +50,13 @@ def main():
     delete_old_changelogs()
 
     tags = get_tags()
-    print(f"Found tags: {tags}")
     if len(tags) < 2:
         previous_tag = None
     else:
+        # The current version tag is tags[0], previous is tags[1]
         previous_tag = tags[1]
-    print(f"Previous tag: {previous_tag}")
 
     commits = get_git_log(previous_tag)
-    print(f"Found commits: {commits}")
 
 
     features = []
