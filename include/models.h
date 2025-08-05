@@ -99,6 +99,7 @@ struct MediaInfo
     std::string sessionKey; // Plex session key
     std::string serverId;   // ID of the server hosting this content
     std::string filename;   // Filename of the media
+    std::string mediaKey;   // Key of the media
 
     MediaInfo() : state(PlaybackState::Stopped),
                   progress(0),

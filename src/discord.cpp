@@ -325,6 +325,7 @@ json Discord::createActivity(const MediaInfo &info)
 {
 	std::string state;
 	std::string details;
+	std::string name;
 	json assets = {};
 	int activityType = 3; // Default: Watching
 
@@ -333,9 +334,14 @@ json Discord::createActivity(const MediaInfo &info)
 
 	if (info.type == MediaType::Music && Config::getInstance().getGatekeepMusic())
 	{
-		std::vector<std::string> art = {"gate1", "gate2", "gate3", "gate4"};
-		int randomIndex = rand() % art.size();
-		assets["large_image"] = art[randomIndex];
+		if (info.mediaKey != last_media_key)
+		{
+			std::vector<std::string> art = {"gate1", "gate2", "gate3", "gate4"};
+			int randomIndex = rand() % art.size();
+			current_gate_art = art[randomIndex];
+			last_media_key = info.mediaKey;
+		}
+		assets["large_image"] = current_gate_art;
 	}
 	else if (!info.artPath.empty())
 	{
@@ -354,6 +360,7 @@ json Discord::createActivity(const MediaInfo &info)
 			return {};
 		}
 		activityType = 3; // Watching
+		name = "Watching a tv show";
 		details = info.grandparentTitle; // Show Title
 		assets["large_text"] = info.grandparentTitle;
 
@@ -437,6 +444,7 @@ json Discord::createActivity(const MediaInfo &info)
 			return {};
 		}
 		activityType = 3; // Watching
+		name = "Watching a movie";
 		details = info.title + " (" + std::to_string(info.year) + ")";
 		assets["large_text"] = info.title;
 
@@ -473,6 +481,7 @@ json Discord::createActivity(const MediaInfo &info)
 			return {};
 		}
 		activityType = 2; // Listening
+		name = "Listening to music";
 
 		if (Config::getInstance().getGatekeepMusic())
 		{
@@ -602,6 +611,7 @@ json Discord::createActivity(const MediaInfo &info)
 
 	json ret = {
 		{"type", activityType},
+		{"name", name},
 		{"state", state},
 		{"details", details},
 		//{"timestamps", timestamps}, // Only add if valid

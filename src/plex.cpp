@@ -774,6 +774,7 @@ void Plex::updateSessionInfo(const std::string &serverId, const std::string &ses
     // Update session key and server ID
     info.sessionKey = sessionKey;
     info.serverId = serverId;
+    info.mediaKey = mediaKey;
 
     // Store the updated info
     m_activeSessions[sessionKey] = info;

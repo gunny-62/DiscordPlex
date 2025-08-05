@@ -119,6 +119,10 @@ private:
 	ConnectionCallback onConnected;
 	ConnectionCallback onDisconnected;
 
+	// For gatekeep art persistence
+	std::string last_media_key;
+	std::string current_gate_art;
+
 	// For rate limiting
 	std::deque<int64_t> frame_write_times;
 	bool canSendFrame(int64_t current_time);
