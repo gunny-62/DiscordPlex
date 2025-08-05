@@ -7,9 +7,9 @@ def get_version_from_file():
     with open("version.txt", "r") as f:
         return f.read().strip()
 
-def get_git_log(previous_tag, current_tag):
+def get_git_log(previous_tag):
     try:
-        command = ['git', 'log', f'{previous_tag}..{current_tag}', '--pretty=format:%s']
+        command = ['git', 'log', f'{previous_tag}..HEAD', '--pretty=format:%s']
         result = subprocess.run(command, capture_output=True, text=True, check=True)
         return result.stdout.splitlines()
     except subprocess.CalledProcessError as e:
@@ -26,25 +26,29 @@ def get_tags():
         print(f"Error getting git tags: {e}", file=sys.stderr)
         return []
 
+def delete_old_changelogs():
+    if os.path.exists("release_notes"):
+        for filename in os.listdir("release_notes"):
+            if filename.startswith("changelog_") and filename.endswith(".md"):
+                os.remove(os.path.join("release_notes", filename))
+                print(f"Deleted old changelog: {filename}")
+
 def main():
     version = get_version_from_file()
     changelog_path = os.path.join("release_notes", f"changelog_{version}.md")
 
     if not os.path.exists("release_notes"):
         os.makedirs("release_notes")
+    
+    delete_old_changelogs()
 
     tags = get_tags()
-    if len(tags) < 2:
+    if not tags:
         previous_tag = None
     else:
-        previous_tag = tags[1]
+        previous_tag = tags[0]
 
-    current_tag = version
-
-    if previous_tag:
-        commits = get_git_log(previous_tag, current_tag)
-    else:
-        commits = get_git_log(None, current_tag)
+    commits = get_git_log(previous_tag)
 
 
     features = []

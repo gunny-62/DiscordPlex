@@ -70,6 +70,12 @@ if %errorlevel% neq 0 (
 
 set "CHANGELOG_PATH=release_notes\changelog_!VERSION_TAG!.md"
 
+if not exist "!CHANGELOG_PATH!" (
+    echo ERROR: Could not find the changelog file.
+    pause
+    exit /b 1
+)
+
 REM --- Create GitHub Release and Upload Asset ---
 echo.
 echo --- Creating GitHub release and uploading installer... ---
