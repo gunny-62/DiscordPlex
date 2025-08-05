@@ -46,12 +46,15 @@ def main():
     delete_old_changelogs()
 
     tags = get_tags()
+    print(f"Found tags: {tags}")
     if len(tags) < 2:
         previous_tag = None
     else:
         previous_tag = tags[1]
+    print(f"Previous tag: {previous_tag}")
 
     commits = get_git_log(previous_tag)
+    print(f"Found commits: {commits}")
 
 
     features = []
