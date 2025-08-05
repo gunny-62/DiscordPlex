@@ -46,10 +46,10 @@ def main():
     delete_old_changelogs()
 
     tags = get_tags()
-    if not tags:
+    if len(tags) < 2:
         previous_tag = None
     else:
-        previous_tag = tags[0]
+        previous_tag = tags[1]
 
     commits = get_git_log(previous_tag)
 
