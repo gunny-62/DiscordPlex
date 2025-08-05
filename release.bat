@@ -55,7 +55,7 @@ for %%F in ("PresenceForPlex-*-win64.exe") do (
     set "INSTALLER_PATH=%%F"
 )
 if not defined INSTALLER_PATH (
-    echo ERROR: Could not find the installer .exe in the 'release' directory.
+    echo ERROR: Could not find the installer .exe.
     pause
     exit /b 1
 )
