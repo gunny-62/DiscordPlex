@@ -3,9 +3,9 @@
 ;--------------------------------
 ; You must define these values
 
-  !define VERSION "4.7.5"
+  !define VERSION "4.7.6"
   !define PATCH  "1"
-  !define INST_DIR "C:/Users/Eric/iCloudDrive/Backup/discord-presence-for-plex/_CPack_Packages/win64/NSIS/Plex-4.7.5-win64"
+  !define INST_DIR "C:/Users/Eric/iCloudDrive/Backup/discord-presence-for-plex/_CPack_Packages/win64/NSIS/PresenceForPlex-4.7.6-win64"
 
 ;--------------------------------
 ;Variables
@@ -25,14 +25,14 @@
   !include "MUI.nsh"
 
   ;Default installation folder
-  InstallDir "$PROGRAMFILES64\Plex"
+  InstallDir "$PROGRAMFILES64\Presence For Plex"
 
 ;--------------------------------
 ;General
 
   ;Name and file
-  Name "Plex"
-  OutFile "C:/Users/Eric/iCloudDrive/Backup/discord-presence-for-plex/_CPack_Packages/win64/NSIS/Plex-4.7.5-win64.exe"
+  Name "Presence For Plex"
+  OutFile "C:/Users/Eric/iCloudDrive/Backup/discord-presence-for-plex/_CPack_Packages/win64/NSIS/PresenceForPlex-4.7.6-win64.exe"
 
   ;Set compression
   SetCompressor lzma
@@ -79,7 +79,7 @@ Var AR_RegFlags
 
   ClearErrors
   ;Reading component status from registry
-  ReadRegDWORD $AR_RegFlags HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Plex\Components\${SecName}" "Installed"
+  ReadRegDWORD $AR_RegFlags HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Presence For Plex\Components\${SecName}" "Installed"
   IfErrors "default_${SecName}"
     ;Status will stay default if registry value not found
     ;(component was never installed)
@@ -112,13 +112,13 @@ Var AR_RegFlags
     ;Section is not selected:
     ;Calling Section uninstall macro and writing zero installed flag
     !insertmacro "Remove_${${SecName}}"
-    WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Plex\Components\${SecName}" \
+    WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Presence For Plex\Components\${SecName}" \
   "Installed" 0
     Goto "exit_${SecName}"
 
  "leave_${SecName}:"
     ;Section is selected:
-    WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Plex\Components\${SecName}" \
+    WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Presence For Plex\Components\${SecName}" \
   "Installed" 1
 
  "exit_${SecName}:"
@@ -491,7 +491,7 @@ Function ConditionalAddToRegistry
   Pop $0
   Pop $1
   StrCmp "$0" "" ConditionalAddToRegistry_EmptyString
-    WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\Plex" \
+    WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\Presence For Plex" \
     "$1" "$0"
     ;MessageBox MB_OK "Set Registry: '$1' to '$0'"
     DetailPrint "Set install registry entry: '$1' to '$0'"
@@ -548,7 +548,7 @@ FunctionEnd
 
   ;Start Menu Folder Page Configuration
   !define MUI_STARTMENUPAGE_REGISTRY_ROOT "SHCTX"
-  !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\Eric\Plex"
+  !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\Eric\Presence For Plex"
   !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
   !insertmacro MUI_PAGE_STARTMENU Application $STARTMENU_FOLDER
 
@@ -662,15 +662,15 @@ Section "-Core installation"
   File /r "${INST_DIR}\*.*"
 
   ;Store installation folder
-  WriteRegStr SHCTX "Software\Eric\Plex" "" $INSTDIR
+  WriteRegStr SHCTX "Software\Eric\Presence For Plex" "" $INSTDIR
 
   ;Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"
   Push "DisplayName"
-  Push "Plex"
+  Push "Presence For Plex"
   Call ConditionalAddToRegistry
   Push "DisplayVersion"
-  Push "4.7.5"
+  Push "4.7.6"
   Call ConditionalAddToRegistry
   Push "Publisher"
   Push "Eric"
@@ -711,7 +711,7 @@ Section "-Core installation"
 
   ;Create shortcuts
   CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
-  CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Plex.lnk" "$INSTDIR\bin\Plex.exe"
+  CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Presence For Plex.lnk" "$INSTDIR\bin\PresenceForPlex.exe"
 
 
   CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
@@ -741,10 +741,10 @@ Section "-Core installation"
   !insertmacro MUI_STARTMENU_WRITE_END
 
 
-        CreateShortCut "$DESKTOP\Plex.lnk" "$INSTDIR\Plex.exe" 
-        CreateDirectory "$SMPROGRAMS\Plex" 
-        CreateShortCut "$SMPROGRAMS\Plex\Plex.lnk" "$INSTDIR\Plex.exe" 
-        WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "Plex" "$INSTDIR\Plex.exe" 
+        CreateShortCut "$DESKTOP\Presence For Plex.lnk" "$INSTDIR\PresenceForPlex.exe" 
+        CreateDirectory "$SMPROGRAMS\Presence For Plex" 
+        CreateShortCut "$SMPROGRAMS\Presence For Plex\Presence For Plex.lnk" "$INSTDIR\PresenceForPlex.exe" 
+        WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "PresenceForPlex" "$INSTDIR\PresenceForPlex.exe" 
     
 
 SectionEnd
@@ -760,7 +760,7 @@ SectionEnd
 ;--------------------------------
 ; Create custom pages
 Function InstallOptionsPage
-  !insertmacro MUI_HEADER_TEXT "Install Options" "Choose options for installing Plex"
+  !insertmacro MUI_HEADER_TEXT "Install Options" "Choose options for installing Presence For Plex"
   !insertmacro MUI_INSTALLOPTIONS_DISPLAY "NSIS.InstallOptions.ini"
 
 FunctionEnd
@@ -832,29 +832,29 @@ FunctionEnd
 
 Section "Uninstall"
   ReadRegStr $START_MENU SHCTX \
-   "Software\Microsoft\Windows\CurrentVersion\Uninstall\Plex" "StartMenu"
+   "Software\Microsoft\Windows\CurrentVersion\Uninstall\Presence For Plex" "StartMenu"
   ;MessageBox MB_OK "Start menu is in: $START_MENU"
   ReadRegStr $DO_NOT_ADD_TO_PATH SHCTX \
-    "Software\Microsoft\Windows\CurrentVersion\Uninstall\Plex" "DoNotAddToPath"
+    "Software\Microsoft\Windows\CurrentVersion\Uninstall\Presence For Plex" "DoNotAddToPath"
   ReadRegStr $ADD_TO_PATH_ALL_USERS SHCTX \
-    "Software\Microsoft\Windows\CurrentVersion\Uninstall\Plex" "AddToPathAllUsers"
+    "Software\Microsoft\Windows\CurrentVersion\Uninstall\Presence For Plex" "AddToPathAllUsers"
   ReadRegStr $ADD_TO_PATH_CURRENT_USER SHCTX \
-    "Software\Microsoft\Windows\CurrentVersion\Uninstall\Plex" "AddToPathCurrentUser"
+    "Software\Microsoft\Windows\CurrentVersion\Uninstall\Presence For Plex" "AddToPathCurrentUser"
   ;MessageBox MB_OK "Add to path: $DO_NOT_ADD_TO_PATH all users: $ADD_TO_PATH_ALL_USERS"
   ReadRegStr $INSTALL_DESKTOP SHCTX \
-    "Software\Microsoft\Windows\CurrentVersion\Uninstall\Plex" "InstallToDesktop"
+    "Software\Microsoft\Windows\CurrentVersion\Uninstall\Presence For Plex" "InstallToDesktop"
   ;MessageBox MB_OK "Install to desktop: $INSTALL_DESKTOP "
 
 
-        Delete "$DESKTOP\Plex.lnk" 
-        Delete "$SMPROGRAMS\Plex\Plex.lnk" 
-        RMDir "$SMPROGRAMS\Plex" 
-        DeleteRegValue HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "Plex" 
+        Delete "$DESKTOP\Presence For Plex.lnk" 
+        Delete "$SMPROGRAMS\Presence For Plex\Presence For Plex.lnk" 
+        RMDir "$SMPROGRAMS\Presence For Plex" 
+        DeleteRegValue HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "PresenceForPlex" 
     
 
   ;Remove files we installed.
   ;Keep the list of directories here in sync with the File commands above.
-  Delete "$INSTDIR\Plex.exe"
+  Delete "$INSTDIR\PresenceForPlex.exe"
   Delete "$INSTDIR\README.md"
 
 
@@ -866,13 +866,13 @@ Section "Uninstall"
 
   ;Remove the uninstaller itself.
   Delete "$INSTDIR\Uninstall.exe"
-  DeleteRegKey SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\Plex"
+  DeleteRegKey SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\Presence For Plex"
 
   ;Remove the installation directory if it is empty.
   RMDir "$INSTDIR"
 
   ; Remove the registry entries.
-  DeleteRegKey SHCTX "Software\Eric\Plex"
+  DeleteRegKey SHCTX "Software\Eric\Presence For Plex"
 
   ; Removes all optional components
   !insertmacro SectionList "RemoveSection_CPack"
@@ -880,7 +880,7 @@ Section "Uninstall"
   !insertmacro MUI_STARTMENU_GETFOLDER Application $MUI_TEMP
 
   Delete "$SMPROGRAMS\$MUI_TEMP\Uninstall.lnk"
-  Delete "$SMPROGRAMS\$MUI_TEMP\Plex.lnk"
+  Delete "$SMPROGRAMS\$MUI_TEMP\Presence For Plex.lnk"
 
 
 
@@ -916,7 +916,7 @@ Section "Uninstall"
     StrCmp "$MUI_TEMP" "$SMPROGRAMS" secondStartMenuDeleteLoopDone secondStartMenuDeleteLoop
   secondStartMenuDeleteLoopDone:
 
-  DeleteRegKey /ifempty SHCTX "Software\Eric\Plex"
+  DeleteRegKey /ifempty SHCTX "Software\Eric\Presence For Plex"
 
   Push $INSTDIR\bin
   StrCmp $DO_NOT_ADD_TO_PATH_ "1" doNotRemoveFromPath 0
@@ -937,10 +937,10 @@ SectionEnd
 Function .onInit
   StrCmp "ON" "ON" 0 inst
 
-  ReadRegStr $0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Plex" "UninstallString"
+  ReadRegStr $0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Presence For Plex" "UninstallString"
   StrCmp $0 "" inst
 
-  ReadRegStr $1 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Plex" "DisplayName"
+  ReadRegStr $1 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Presence For Plex" "DisplayName"
   MessageBox MB_YESNOCANCEL|MB_ICONEXCLAMATION \
   "$1 is already installed. $\n$\nDo you want to uninstall the old version before installing the new one?" \
   /SD IDYES IDYES uninst IDNO inst
@@ -979,14 +979,14 @@ inst:
   ; install directory that is expected to be the
   ; default
   StrCpy $IS_DEFAULT_INSTALLDIR 0
-  StrCmp "$INSTDIR" "$PROGRAMFILES64\Plex" 0 +2
+  StrCmp "$INSTDIR" "$PROGRAMFILES64\Presence For Plex" 0 +2
     StrCpy $IS_DEFAULT_INSTALLDIR 1
 
   StrCpy $SV_ALLUSERS "JustMe"
   ; if default install dir then change the default
   ; if it is installed for JustMe
   StrCmp "$IS_DEFAULT_INSTALLDIR" "1" 0 +2
-    StrCpy $INSTDIR "$DOCUMENTS\Plex"
+    StrCpy $INSTDIR "$DOCUMENTS\Presence For Plex"
 
   ClearErrors
   UserInfo::GetName
@@ -1012,7 +1012,7 @@ inst:
   done:
   StrCmp $SV_ALLUSERS "AllUsers" 0 +3
     StrCmp "$IS_DEFAULT_INSTALLDIR" "1" 0 +2
-      StrCpy $INSTDIR "$PROGRAMFILES64\Plex"
+      StrCpy $INSTDIR "$PROGRAMFILES64\Presence For Plex"
 
   StrCmp "" "ON" 0 noOptionsPage
     !insertmacro MUI_INSTALLOPTIONS_EXTRACT "NSIS.InstallOptions.ini"
