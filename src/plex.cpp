@@ -990,7 +990,7 @@ void Plex::extractMusicSpecificInfo(const nlohmann::json &metadata, MediaInfo &i
     // Generate Plexamp deep link
     if (metadata.contains("ratingKey"))
     {
-        info.plexampUrl = "plexamp://player/track?server=" + info.serverId + "&key=" + metadata.value("ratingKey", "");
+        info.plexampUrl = "plex://player/track?server=" + info.serverId + "&key=" + metadata.value("ratingKey", "");
         LOG_INFO("Plex", "Generated Plexamp URL: " + info.plexampUrl);
     }
 

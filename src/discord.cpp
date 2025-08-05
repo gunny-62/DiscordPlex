@@ -598,7 +598,7 @@ json Discord::createActivity(const MediaInfo &info)
 	{
 		if (!info.plexampUrl.empty())
 		{
-			buttons.push_back({{"label", "Play on Plexamp"},
+			buttons.push_back({{"label", "Play on Plex"},
 							   {"url", info.plexampUrl}});
 		}
 		buttons.push_back({{"label", "Search on YouTube"},
