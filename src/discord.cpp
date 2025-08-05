@@ -329,7 +329,7 @@ json Discord::createActivity(const MediaInfo &info)
 	int activityType = 3; // Default: Watching
 
 	// Default large image
-	assets["large_image"] = "plexlogo1024";
+	assets["large_image"] = "plex";
 
 	if (info.type == MediaType::Music && Config::getInstance().getGatekeepMusic())
 	{
@@ -341,10 +341,6 @@ json Discord::createActivity(const MediaInfo &info)
 	{
 		assets["large_image"] = info.artPath;
 		LOG_INFO("Discord", "Using artwork URL: " + info.artPath);
-	}
-	else
-	{
-		assets["large_image"] = "plexlogo1024";
 	}
 
 	if (info.type == MediaType::TVShow)
@@ -534,7 +530,7 @@ json Discord::createActivity(const MediaInfo &info)
 	}
 	else if (info.state == PlaybackState::Paused)
 	{
-		assets["small_image"] = "pause1024";
+		assets["small_image"] = "pause";
 		assets["small_text"] = "Paused";
 		// Keep existing details and state
 	}
