@@ -926,7 +926,7 @@ MediaInfo Plex::fetchMediaDetails(const std::string &serverUri, const std::strin
         }
         else if (type == "track")
         {
-            extractMusicSpecificInfo(metadata, info, serverUri, accessToken);
+            extractMusicSpecificInfo(metadata, info, serverUri, accessToken, info.serverId);
         }
         else
         {
@@ -981,7 +981,7 @@ void Plex::extractTVShowSpecificInfo(const nlohmann::json &metadata, MediaInfo &
 }
 
 void Plex::extractMusicSpecificInfo(const nlohmann::json &metadata, MediaInfo &info,
-                                    const std::string &serverUri, const std::string &accessToken)
+                                    const std::string &serverUri, const std::string &accessToken, const std::string &serverId)
 {
     info.type = MediaType::Music;
     info.thumbPath = metadata.value("parentThumb", "");

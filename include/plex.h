@@ -116,5 +116,5 @@ private:
 									 const std::string &sessionKey);
 	std::string getPreferredServerUri(const std::shared_ptr<PlexServer> &server);
 	void extractMusicSpecificInfo(const nlohmann::json &metadata, MediaInfo &info,
-								  const std::string &serverUri, const std::string &accessToken);
+								  const std::string &serverUri, const std::string &accessToken, const std::string &serverId);
 };
