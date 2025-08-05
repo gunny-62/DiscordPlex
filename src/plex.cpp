@@ -1,4 +1,5 @@
 #include "plex.h"
+#include "utils.h"
 
 // API endpoints and constants
 namespace
@@ -113,28 +114,6 @@ bool Plex::init()
     return true;
 }
 
-// Helper function for URL encoding
-std::string Plex::urlEncode(const std::string &value)
-{
-    std::ostringstream escaped;
-    escaped.fill('0');
-    escaped << std::hex;
-
-    for (char c : value)
-    {
-        if (isalnum(static_cast<unsigned char>(c)) || c == '-' || c == '_' || c == '.' || c == '~')
-        {
-            escaped << c;
-        }
-        else
-        {
-            escaped << '%' << std::uppercase << std::setw(2) << int(static_cast<unsigned char>(c));
-            escaped << std::nouppercase;
-        }
-    }
-
-    return escaped.str();
-}
 
 // Standard headers helper method
 std::map<std::string, std::string> Plex::getStandardHeaders(const std::string &token)
@@ -1008,6 +987,12 @@ void Plex::extractMusicSpecificInfo(const nlohmann::json &metadata, MediaInfo &i
     info.thumbPath = metadata.value("parentThumb", "");
     LOG_INFO("Plex", "Found music thumb path: " + info.thumbPath);
 
+    // Generate Plexamp deep link
+    if (metadata.contains("ratingKey"))
+    {
+        info.plexampUrl = "plexamp://player/track?server=" + info.serverId + "&key=" + metadata.value("ratingKey", "");
+    }
+
     if (Config::getInstance().getShowFlacAsCD())
     {
         if (metadata.contains("Media") && metadata["Media"].is_array() && !metadata["Media"].empty())
@@ -1199,7 +1184,7 @@ void Plex::fetchAnimeMetadata(const nlohmann::json &metadata, MediaInfo &info)
         std::string encodedTitle = cacheKey;
         std::string::size_type pos = 0;
 
-        encodedTitle = urlEncode(encodedTitle);
+        encodedTitle = utils::urlEncode(encodedTitle);
 
         std::string jikanUrl = std::string(JIKAN_API_URL) + "?q=" + encodedTitle;
 

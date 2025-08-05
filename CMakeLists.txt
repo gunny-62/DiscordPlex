@@ -54,6 +54,7 @@ set(SOURCES
     src/single_instance.cpp
     src/trayicon.cpp
     src/uuid.cpp
+    src/utils.cpp
 )
 
 set(HEADERS

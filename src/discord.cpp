@@ -1,4 +1,5 @@
 #include "discord.h"
+#include "utils.h"
 #include <cstdlib>
 #include <ctime>
 
@@ -593,7 +594,17 @@ json Discord::createActivity(const MediaInfo &info)
 	json buttons = {};
 
 	// Add relevant buttons based on available IDs
-	if (!info.malId.empty())
+	if (info.type == MediaType::Music)
+	{
+		if (!info.plexampUrl.empty())
+		{
+			buttons.push_back({{"label", "Play on Plexamp"},
+							   {"url", info.plexampUrl}});
+		}
+		buttons.push_back({{"label", "Search on YouTube"},
+						   {"url", "https://www.youtube.com/results?search_query=" + utils::urlEncode(info.artist + " " + info.title)}});
+	}
+	else if (!info.malId.empty())
 	{
 		buttons.push_back({{"label", "View on MyAnimeList"},
 						   {"url", "https://myanimelist.net/anime/" + info.malId}});
@@ -603,7 +614,6 @@ json Discord::createActivity(const MediaInfo &info)
 		buttons.push_back({{"label", "View on IMDb"},
 						   {"url", "https://www.imdb.com/title/" + info.imdbId}});
 	}
-	// Potentially add buttons for music later (e.g., MusicBrainz, Spotify link if available)
 
 	json ret = {
 		{"type", activityType},

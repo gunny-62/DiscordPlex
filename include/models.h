@@ -83,6 +83,7 @@ struct MediaInfo
     // Music specific
     std::string album;  // Album title
     std::string artist; // Artist name
+    std::string plexampUrl; // Plexamp deep link
     int audioBitDepth;
     int audioSamplingRate;
 
