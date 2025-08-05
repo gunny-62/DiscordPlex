@@ -991,6 +991,7 @@ void Plex::extractMusicSpecificInfo(const nlohmann::json &metadata, MediaInfo &i
     if (metadata.contains("ratingKey"))
     {
         info.plexampUrl = "plexamp://player/track?server=" + info.serverId + "&key=" + metadata.value("ratingKey", "");
+        LOG_INFO("Plex", "Generated Plexamp URL: " + info.plexampUrl);
     }
 
     if (Config::getInstance().getShowFlacAsCD())
