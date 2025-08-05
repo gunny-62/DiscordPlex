@@ -187,14 +187,20 @@ public:
     bool getShowTVShows() const;
     void setShowTVShows(bool show);
 
-    bool getShowBitrate() const;
-    void setShowBitrate(bool show);
+    bool getShowMovieBitrate() const;
+    void setShowMovieBitrate(bool show);
 
-    bool getShowQuality() const;
-    void setShowQuality(bool show);
+    bool getShowMovieQuality() const;
+    void setShowMovieQuality(bool show);
 
-    bool getShowFlac() const;
-    void setShowFlac(bool show);
+    bool getShowTVShowBitrate() const;
+    void setShowTVShowBitrate(bool show);
+
+    bool getShowTVShowQuality() const;
+    void setShowTVShowQuality(bool show);
+
+    bool getShowFlacAsCD() const;
+    void setShowFlacAsCD(bool show);
 
     bool getGatekeepMusic() const;
     void setGatekeepMusic(bool gatekeep);
@@ -254,9 +260,11 @@ private:
     bool showMusic{true};
     bool showMovies{true};
     bool showTVShows{true};
-    bool showBitrate{true};
-    bool showQuality{true};
-    bool showFlac{true};
+    bool showMovieBitrate{true};
+    bool showMovieQuality{true};
+    bool showTVShowBitrate{true};
+    bool showTVShowQuality{true};
+    bool showFlacAsCD{true};
     bool gatekeepMusic{false};
     std::string gatekeepMusicTitle;
     std::string episodeFormat{"E{episode}"};

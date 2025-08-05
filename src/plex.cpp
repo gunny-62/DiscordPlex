@@ -897,8 +897,22 @@ MediaInfo Plex::fetchMediaDetails(const std::string &serverUri, const std::strin
         if (metadata.contains("Media") && metadata["Media"].is_array() && !metadata["Media"].empty())
         {
             auto media = metadata["Media"][0];
-            info.videoResolution = media.value("videoResolution", "");
-            info.bitrate = media.value("bitrate", 0);
+            if (Config::getInstance().getShowMovieQuality() && info.type == MediaType::Movie)
+            {
+                info.videoResolution = media.value("videoResolution", "");
+            }
+            if (Config::getInstance().getShowTVShowQuality() && info.type == MediaType::TVShow)
+            {
+                info.videoResolution = media.value("videoResolution", "");
+            }
+            if (Config::getInstance().getShowMovieBitrate() && info.type == MediaType::Movie)
+            {
+                info.bitrate = media.value("bitrate", 0);
+            }
+            if (Config::getInstance().getShowTVShowBitrate() && info.type == MediaType::TVShow)
+            {
+                info.bitrate = media.value("bitrate", 0);
+            }
 
             if (media.contains("Part") && media["Part"].is_array() && !media["Part"].empty())
             {
@@ -993,6 +1007,32 @@ void Plex::extractMusicSpecificInfo(const nlohmann::json &metadata, MediaInfo &i
     info.type = MediaType::Music;
     info.thumbPath = metadata.value("parentThumb", "");
     LOG_INFO("Plex", "Found music thumb path: " + info.thumbPath);
+
+    if (Config::getInstance().getShowFlacAsCD())
+    {
+        if (metadata.contains("Media") && metadata["Media"].is_array() && !metadata["Media"].empty())
+        {
+            auto media = metadata["Media"][0];
+            if (media.contains("Part") && media["Part"].is_array() && !media["Part"].empty())
+            {
+                auto part = media["Part"][0];
+                if (part.contains("Stream") && part["Stream"].is_array())
+                {
+                    for (const auto &stream : part["Stream"])
+                    {
+                        if (stream.value("streamType", 0) == 2) // Audio stream
+                        {
+                            if (stream.value("codec", "") == "flac")
+                            {
+                                info.album = "CD";
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     parseGuid(metadata, info, serverUri, accessToken);
     parseGenres(metadata, info);

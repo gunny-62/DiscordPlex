@@ -413,13 +413,13 @@ json Discord::createActivity(const MediaInfo &info)
 		state_ss << state;
 
 		std::string formatted_resolution = formatResolution(info.videoResolution);
-		if (!formatted_resolution.empty() && Config::getInstance().getShowQuality())
+		if (!formatted_resolution.empty() && Config::getInstance().getShowTVShowQuality())
 		{
 			state_ss << " • " << formatted_resolution;
 		}
 
 		std::string formatted_bitrate = formatBitrate(info.bitrate);
-		if (!formatted_bitrate.empty() && Config::getInstance().getShowBitrate())
+		if (!formatted_bitrate.empty() && Config::getInstance().getShowTVShowBitrate())
 		{
 			state_ss << " • " << formatted_bitrate;
 		}
@@ -447,13 +447,13 @@ json Discord::createActivity(const MediaInfo &info)
 
 		std::stringstream state_ss;
 		std::string formatted_resolution = formatResolution(info.videoResolution);
-		if (!formatted_resolution.empty() && Config::getInstance().getShowQuality())
+		if (!formatted_resolution.empty() && Config::getInstance().getShowMovieQuality())
 		{
 			state_ss << formatted_resolution;
 		}
 
 		std::string formatted_bitrate = formatBitrate(info.bitrate);
-		if (!formatted_bitrate.empty() && Config::getInstance().getShowBitrate())
+		if (!formatted_bitrate.empty() && Config::getInstance().getShowMovieBitrate())
 		{
 			if (state_ss.str().length() > 0) { state_ss << " "; }
 			state_ss << formatted_bitrate;
@@ -498,7 +498,7 @@ json Discord::createActivity(const MediaInfo &info)
 			state = info.artist + " - " + info.album;
 		}
 
-		if (Config::getInstance().getShowFlac())
+		if (Config::getInstance().getShowFlacAsCD())
 		{
 			std::string lower_filename = info.filename;
 			std::transform(lower_filename.begin(), lower_filename.end(), lower_filename.begin(),

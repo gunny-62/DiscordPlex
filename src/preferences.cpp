@@ -36,11 +36,13 @@ INT_PTR CALLBACK PreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
         CheckDlgButton(hDlg, IDC_CHECK_GATEKEEP_MUSIC, config.getGatekeepMusic() ? BST_CHECKED : BST_UNCHECKED);
         SetDlgItemText(hDlg, IDC_EDIT_GATEKEEP_MUSIC_TITLE, config.getGatekeepMusicTitle().c_str());
         EnableWindow(GetDlgItem(hDlg, IDC_EDIT_GATEKEEP_MUSIC_TITLE), config.getGatekeepMusic());
-        CheckDlgButton(hDlg, IDC_CHECK_SHOW_FLAC, config.getShowFlac() ? BST_CHECKED : BST_UNCHECKED);
+        CheckDlgButton(hDlg, IDC_CHECK_SHOW_FLAC_AS_CD, config.getShowFlacAsCD() ? BST_CHECKED : BST_UNCHECKED);
         CheckDlgButton(hDlg, IDC_CHECK_SHOW_MOVIES, config.getShowMovies() ? BST_CHECKED : BST_UNCHECKED);
+        CheckDlgButton(hDlg, IDC_CHECK_SHOW_MOVIE_BITRATE, config.getShowMovieBitrate() ? BST_CHECKED : BST_UNCHECKED);
+        CheckDlgButton(hDlg, IDC_CHECK_SHOW_MOVIE_QUALITY, config.getShowMovieQuality() ? BST_CHECKED : BST_UNCHECKED);
         CheckDlgButton(hDlg, IDC_CHECK_SHOW_TVSHOWS, config.getShowTVShows() ? BST_CHECKED : BST_UNCHECKED);
-        CheckDlgButton(hDlg, IDC_CHECK_SHOW_BITRATE, config.getShowBitrate() ? BST_CHECKED : BST_UNCHECKED);
-        CheckDlgButton(hDlg, IDC_CHECK_SHOW_QUALITY, config.getShowQuality() ? BST_CHECKED : BST_UNCHECKED);
+        CheckDlgButton(hDlg, IDC_CHECK_SHOW_TVSHOW_BITRATE, config.getShowTVShowBitrate() ? BST_CHECKED : BST_UNCHECKED);
+        CheckDlgButton(hDlg, IDC_CHECK_SHOW_TVSHOW_QUALITY, config.getShowTVShowQuality() ? BST_CHECKED : BST_UNCHECKED);
         // Episode Format ComboBox
         HWND hEpisodeCombo = GetDlgItem(hDlg, IDC_EDIT_EPISODE_FORMAT);
         SendMessage(hEpisodeCombo, CB_ADDSTRING, 0, (LPARAM) "E{episode_num}");
@@ -87,11 +89,13 @@ INT_PTR CALLBACK PreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
             char buffer[256];
             GetDlgItemText(hDlg, IDC_EDIT_GATEKEEP_MUSIC_TITLE, buffer, 256);
             config.setGatekeepMusicTitle(buffer);
-            config.setShowFlac(IsDlgButtonChecked(hDlg, IDC_CHECK_SHOW_FLAC) == BST_CHECKED);
+            config.setShowFlacAsCD(IsDlgButtonChecked(hDlg, IDC_CHECK_SHOW_FLAC_AS_CD) == BST_CHECKED);
             config.setShowMovies(IsDlgButtonChecked(hDlg, IDC_CHECK_SHOW_MOVIES) == BST_CHECKED);
+            config.setShowMovieBitrate(IsDlgButtonChecked(hDlg, IDC_CHECK_SHOW_MOVIE_BITRATE) == BST_CHECKED);
+            config.setShowMovieQuality(IsDlgButtonChecked(hDlg, IDC_CHECK_SHOW_MOVIE_QUALITY) == BST_CHECKED);
             config.setShowTVShows(IsDlgButtonChecked(hDlg, IDC_CHECK_SHOW_TVSHOWS) == BST_CHECKED);
-            config.setShowBitrate(IsDlgButtonChecked(hDlg, IDC_CHECK_SHOW_BITRATE) == BST_CHECKED);
-            config.setShowQuality(IsDlgButtonChecked(hDlg, IDC_CHECK_SHOW_QUALITY) == BST_CHECKED);
+            config.setShowTVShowBitrate(IsDlgButtonChecked(hDlg, IDC_CHECK_SHOW_TVSHOW_BITRATE) == BST_CHECKED);
+            config.setShowTVShowQuality(IsDlgButtonChecked(hDlg, IDC_CHECK_SHOW_TVSHOW_QUALITY) == BST_CHECKED);
 
             HWND hEpisodeCombo = GetDlgItem(hDlg, IDC_EDIT_EPISODE_FORMAT);
             int episodeIndex = SendMessage(hEpisodeCombo, CB_GETCURSEL, 0, 0);

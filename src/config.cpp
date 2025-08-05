@@ -182,9 +182,11 @@ void Config::loadFromYaml(const YAML::Node &config)
         showMusic = presence["show_music"] ? presence["show_music"].as<bool>() : true;
         showMovies = presence["show_movies"] ? presence["show_movies"].as<bool>() : true;
         showTVShows = presence["show_tv_shows"] ? presence["show_tv_shows"].as<bool>() : true;
-        showBitrate = presence["show_bitrate"] ? presence["show_bitrate"].as<bool>() : true;
-        showQuality = presence["show_quality"] ? presence["show_quality"].as<bool>() : true;
-        showFlac = presence["show_flac"] ? presence["show_flac"].as<bool>() : true;
+        showMovieBitrate = presence["show_movie_bitrate"] ? presence["show_movie_bitrate"].as<bool>() : true;
+        showMovieQuality = presence["show_movie_quality"] ? presence["show_movie_quality"].as<bool>() : true;
+        showTVShowBitrate = presence["show_tv_show_bitrate"] ? presence["show_tv_show_bitrate"].as<bool>() : true;
+        showTVShowQuality = presence["show_tv_show_quality"] ? presence["show_tv_show_quality"].as<bool>() : true;
+        showFlacAsCD = presence["show_flac_as_cd"] ? presence["show_flac_as_cd"].as<bool>() : true;
         gatekeepMusic = presence["gatekeep_music"] ? presence["gatekeep_music"].as<bool>() : false;
         gatekeepMusicTitle = presence["gatekeep_music_title"] ? presence["gatekeep_music_title"].as<std::string>() : "";
         episodeFormat = presence["episode_format"] ? presence["episode_format"].as<std::string>() : "E{episode}";
@@ -265,9 +267,11 @@ YAML::Node Config::saveToYaml() const
     presence["show_music"] = showMusic;
     presence["show_movies"] = showMovies;
     presence["show_tv_shows"] = showTVShows;
-    presence["show_bitrate"] = showBitrate;
-    presence["show_quality"] = showQuality;
-    presence["show_flac"] = showFlac;
+    presence["show_movie_bitrate"] = showMovieBitrate;
+    presence["show_movie_quality"] = showMovieQuality;
+    presence["show_tv_show_bitrate"] = showTVShowBitrate;
+    presence["show_tv_show_quality"] = showTVShowQuality;
+    presence["show_flac_as_cd"] = showFlacAsCD;
     presence["gatekeep_music"] = gatekeepMusic;
     presence["gatekeep_music_title"] = gatekeepMusicTitle;
     presence["episode_format"] = episodeFormat;
@@ -429,40 +433,65 @@ void Config::setShowTVShows(bool show)
     showTVShows = show;
 }
 
-bool Config::getShowBitrate() const
+
+bool Config::getShowMovieBitrate() const
 {
     std::shared_lock lock(mutex);
-    return showBitrate;
+    return showMovieBitrate;
 }
 
-void Config::setShowBitrate(bool show)
+void Config::setShowMovieBitrate(bool show)
 {
     std::unique_lock lock(mutex);
-    showBitrate = show;
+    showMovieBitrate = show;
 }
 
-bool Config::getShowQuality() const
+bool Config::getShowMovieQuality() const
 {
     std::shared_lock lock(mutex);
-    return showQuality;
+    return showMovieQuality;
 }
 
-void Config::setShowQuality(bool show)
+void Config::setShowMovieQuality(bool show)
 {
     std::unique_lock lock(mutex);
-    showQuality = show;
+    showMovieQuality = show;
 }
 
-bool Config::getShowFlac() const
+bool Config::getShowTVShowBitrate() const
 {
     std::shared_lock lock(mutex);
-    return showFlac;
+    return showTVShowBitrate;
 }
 
-void Config::setShowFlac(bool show)
+void Config::setShowTVShowBitrate(bool show)
 {
     std::unique_lock lock(mutex);
-    showFlac = show;
+    showTVShowBitrate = show;
+}
+
+bool Config::getShowTVShowQuality() const
+{
+    std::shared_lock lock(mutex);
+    return showTVShowQuality;
+}
+
+void Config::setShowTVShowQuality(bool show)
+{
+    std::unique_lock lock(mutex);
+    showTVShowQuality = show;
+}
+
+bool Config::getShowFlacAsCD() const
+{
+    std::shared_lock lock(mutex);
+    return showFlacAsCD;
+}
+
+void Config::setShowFlacAsCD(bool show)
+{
+    std::unique_lock lock(mutex);
+    showFlacAsCD = show;
 }
 
 bool Config::getGatekeepMusic() const
