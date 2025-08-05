@@ -175,12 +175,6 @@ void Config::loadFromYaml(const YAML::Node &config)
         tmdbAccessToken = config["tmdb_access_token"].as<std::string>();
     }
 
-    // GitHub PAT
-    if (config["github_pat"])
-    {
-        githubPAT = config["github_pat"].as<std::string>();
-    }
-
     // Presence settings
     if (config["presence"])
     {
@@ -265,9 +259,6 @@ YAML::Node Config::saveToYaml() const
 
     // TMDB API key
     config["tmdb_access_token"] = tmdbAccessToken;
-
-    // GitHub PAT
-    config["github_pat"] = githubPAT;
 
     // Presence settings
     YAML::Node presence;
@@ -399,18 +390,6 @@ void Config::setTMDBAccessToken(const std::string &token)
 {
     std::unique_lock lock(mutex);
     tmdbAccessToken = token;
-}
-
-std::string Config::getGithubPAT() const
-{
-    std::shared_lock lock(mutex);
-    return githubPAT;
-}
-
-void Config::setGithubPAT(const std::string &token)
-{
-    std::unique_lock lock(mutex);
-    githubPAT = token;
 }
 
 // Presence settings

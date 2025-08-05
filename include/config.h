@@ -120,18 +120,6 @@ public:
      */
     void setTMDBAccessToken(const std::string &token);
 
-    /**
-     * @brief Get GitHub Personal Access Token
-     * @return GitHub PAT
-     */
-    std::string getGithubPAT() const;
-
-    /**
-     * @brief Set GitHub Personal Access Token
-     * @param token New GitHub PAT
-     */
-    void setGithubPAT(const std::string &token);
-
     //
     // Plex server management
     //
@@ -281,7 +269,6 @@ private:
     std::map<std::string, std::shared_ptr<PlexServer>> plexServers;
     std::string tmdbAccessToken{
         "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzNmMxOTI3ZjllMTlkMzUxZWFmMjAxNGViN2JmYjNkZiIsIm5iZiI6MTc0NTQzMTA3NC4yMjcsInN1YiI6IjY4MDkyYTIyNmUxYTc2OWU4MWVmMGJhOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.Td6eAbW7SgQOMmQpRDwVM-_3KIMybGRqWNK8Yqw1Zzs"};
-    std::string githubPAT{"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"};
 
     // Thread safety mutex
     mutable std::shared_mutex mutex;

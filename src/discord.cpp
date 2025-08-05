@@ -342,6 +342,10 @@ json Discord::createActivity(const MediaInfo &info)
 		assets["large_image"] = info.artPath;
 		LOG_INFO("Discord", "Using artwork URL: " + info.artPath);
 	}
+	else
+	{
+		assets["large_image"] = "plex";
+	}
 
 	if (info.type == MediaType::TVShow)
 	{
