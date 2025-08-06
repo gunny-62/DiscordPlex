@@ -600,6 +600,7 @@ json Discord::createActivity(const MediaInfo &info)
 		{
 			buttons.push_back({{"label", "Search on Plex"},
 							   {"url", info.plexampUrl}});
+			LOG_INFO("Discord", "Plex URL: " + info.plexampUrl);
 		}
 		buttons.push_back({{"label", "Search on YouTube"},
 						   {"url", "https://www.youtube.com/results?search_query=" + utils::urlEncode(info.artist + " " + info.title)}});
