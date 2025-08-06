@@ -596,12 +596,6 @@ json Discord::createActivity(const MediaInfo &info)
 	// Add relevant buttons based on available IDs
 	if (info.type == MediaType::Music && !Config::getInstance().getGatekeepMusic())
 	{
-		if (!info.plexampUrl.empty())
-		{
-			buttons.push_back({{"label", "Play on Plex"},
-							   {"url", info.plexampUrl}});
-			LOG_INFO("Discord", "Plex URL: " + info.plexampUrl);
-		}
 		buttons.push_back({{"label", "Search on YouTube"},
 						   {"url", "https://www.youtube.com/results?search_query=" + utils::urlEncode(info.artist + " " + info.title)}});
 	}
