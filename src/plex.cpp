@@ -988,9 +988,9 @@ void Plex::extractMusicSpecificInfo(const nlohmann::json &metadata, MediaInfo &i
     LOG_INFO("Plex", "Found music thumb path: " + info.thumbPath);
 
     // Generate Plex deep link
-    if (!info.artist.empty() && !info.title.empty())
+    if (metadata.contains("ratingKey"))
     {
-        info.plexampUrl = "plex://search/" + utils::urlEncode(info.artist + " " + info.title);
+        info.plexampUrl = "plex://preplay/" + metadata.value("ratingKey", "");
         LOG_INFO("Plex", "Generated Plex URL: " + info.plexampUrl);
     }
 
