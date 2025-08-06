@@ -990,7 +990,7 @@ void Plex::extractMusicSpecificInfo(const nlohmann::json &metadata, MediaInfo &i
     // Generate Plex deep link
     if (!info.artist.empty() && !info.title.empty())
     {
-        info.plexampUrl = "plex://search?query=" + utils::urlEncode(info.artist + " " + info.title);
+        info.plexampUrl = "plex://search/" + utils::urlEncode(info.artist + " " + info.title);
         LOG_INFO("Plex", "Generated Plex URL: " + info.plexampUrl);
     }
 
