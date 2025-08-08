@@ -3,9 +3,9 @@
 ;--------------------------------
 ; You must define these values
 
-  !define VERSION "6.0.2"
+  !define VERSION "6.0.3"
   !define PATCH  "1"
-  !define INST_DIR "C:/Users/Eric/iCloudDrive/Backup/discord-presence-for-plex/_CPack_Packages/win64/NSIS/PresenceForPlex-6.0.2-win64"
+  !define INST_DIR "C:/Users/Eric/iCloudDrive/Backup/discord-presence-for-plex/_CPack_Packages/win64/NSIS/PresenceForPlex-6.0.3-win64"
 
 ;--------------------------------
 ;Variables
@@ -32,7 +32,7 @@
 
   ;Name and file
   Name "Presence For Plex"
-  OutFile "C:/Users/Eric/iCloudDrive/Backup/discord-presence-for-plex/_CPack_Packages/win64/NSIS/PresenceForPlex-6.0.2-win64.exe"
+  OutFile "C:/Users/Eric/iCloudDrive/Backup/discord-presence-for-plex/_CPack_Packages/win64/NSIS/PresenceForPlex-6.0.3-win64.exe"
 
   ;Set compression
   SetCompressor lzma
@@ -670,7 +670,7 @@ Section "-Core installation"
   Push "Presence For Plex"
   Call ConditionalAddToRegistry
   Push "DisplayVersion"
-  Push "6.0.2"
+  Push "6.0.3"
   Call ConditionalAddToRegistry
   Push "Publisher"
   Push "Eric"

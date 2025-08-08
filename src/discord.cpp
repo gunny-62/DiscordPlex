@@ -361,8 +361,7 @@ json Discord::createActivity(const MediaInfo &info)
 		}
 		activityType = 3; // Watching
 		details = info.grandparentTitle; // Show Title
-		assets["large_text"] = info.grandparentTitle;
-
+		
 		std::string tvShowFormat = Config::getInstance().getTVShowFormat();
 		std::string seasonFormat = Config::getInstance().getSeasonFormat();
 		std::string episodeFormat = Config::getInstance().getEpisodeFormat();
@@ -436,7 +435,7 @@ json Discord::createActivity(const MediaInfo &info)
 
         if (Config::getInstance().getShowClient() && !info.client.empty())
         {
-            state_ss << " • " << "Watching on: " + info.client;
+            state_ss << " • " << "Watching on " + info.client;
         }
 		state = state_ss.str();
 	}
@@ -448,8 +447,7 @@ json Discord::createActivity(const MediaInfo &info)
 		}
 		activityType = 3; // Watching
 		details = info.title + " (" + std::to_string(info.year) + ")";
-		assets["large_text"] = info.title;
-
+		
 		std::stringstream state_ss;
 		std::string formatted_resolution = formatResolution(info.videoResolution);
 		if (!formatted_resolution.empty() && Config::getInstance().getShowMovieQuality())
@@ -478,9 +476,9 @@ json Discord::createActivity(const MediaInfo &info)
         if (Config::getInstance().getShowClient() && !info.client.empty())
         {
             if (state_ss.str().length() > 0) {
-                state_ss << " • " << "Watching on: " << info.client;
+                state_ss << " • " << "Watching on " << info.client;
             } else {
-                state_ss << "Watching on: " << info.client;
+                state_ss << "Watching on " << info.client;
             }
         }
 		state = state_ss.str();
