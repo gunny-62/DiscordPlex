@@ -461,14 +461,9 @@ json Discord::createActivity(const MediaInfo &info)
 		std::string formatted_bitrate = formatBitrate(info.bitrate);
 		if (!formatted_bitrate.empty() && Config::getInstance().getShowMovieBitrate())
 		{
-			if (state_ss.str().length() > 0) { state_ss << " "; }
+			if (state_ss.str().length() > 0) { state_ss << " • "; }
 			state_ss << formatted_bitrate;
 		}
-
-        if (!info.client.empty())
-        {
-            state += "\nWatching on: " + info.client;
-        }
 
         // Check for Blu-ray or REMUX in the filename
         std::string lower_filename = info.filename;
@@ -477,8 +472,17 @@ json Discord::createActivity(const MediaInfo &info)
 
         if (lower_filename.find("remux") != std::string::npos || lower_filename.find("bluray") != std::string::npos)
         {
-			if (state_ss.str().length() > 0) { state_ss << " "; }
+			if (state_ss.str().length() > 0) { state_ss << " • "; }
             state_ss << "Bluray";
+        }
+
+        if (!info.client.empty())
+        {
+            if (state_ss.str().length() > 0) {
+                state_ss << "\nWatching on: " << info.client;
+            } else {
+                state_ss << "Watching on: " << info.client;
+            }
         }
 		state = state_ss.str();
 	}
