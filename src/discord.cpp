@@ -326,6 +326,7 @@ json Discord::createActivity(const MediaInfo &info)
 {
 	std::string state;
 	std::string details;
+	std::string large_text;
 	json assets = {};
 	int activityType = 3; // Default: Watching
 
@@ -409,35 +410,38 @@ json Discord::createActivity(const MediaInfo &info)
 		}
 
 		state = tvShowFormat;
-		std::stringstream state_ss;
-		state_ss << state;
-
-		std::string formatted_resolution = formatResolution(info.videoResolution);
-		if (!formatted_resolution.empty() && Config::getInstance().getShowTVShowQuality())
+		
+		std::stringstream large_text_ss;
+		if (Config::getInstance().getShowClient() && !info.client.empty())
 		{
-			state_ss << " • " << formatted_resolution;
+			large_text_ss << "Watching on " << info.client;
 		}
-
-		std::string formatted_bitrate = formatBitrate(info.bitrate);
-		if (!formatted_bitrate.empty() && Config::getInstance().getShowTVShowBitrate())
+		else
 		{
-			state_ss << " • " << formatted_bitrate;
+			std::string formatted_resolution = formatResolution(info.videoResolution);
+			if (!formatted_resolution.empty() && Config::getInstance().getShowTVShowQuality())
+			{
+				large_text_ss << formatted_resolution;
+			}
+
+			std::string formatted_bitrate = formatBitrate(info.bitrate);
+			if (!formatted_bitrate.empty() && Config::getInstance().getShowTVShowBitrate())
+			{
+				if (large_text_ss.str().length() > 0) { large_text_ss << " • "; }
+				large_text_ss << formatted_bitrate;
+			}
+			
+			std::string lower_filename = info.filename;
+			std::transform(lower_filename.begin(), lower_filename.end(), lower_filename.begin(),
+						   [](unsigned char c){ return std::tolower(c); });
+
+			if (lower_filename.find("remux") != std::string::npos || lower_filename.find("bluray") != std::string::npos)
+			{
+				if (large_text_ss.str().length() > 0) { large_text_ss << " • "; }
+				large_text_ss << "Bluray";
+			}
 		}
-        // Check for Blu-ray or REMUX in the filename
-        std::string lower_filename = info.filename;
-        std::transform(lower_filename.begin(), lower_filename.end(), lower_filename.begin(),
-                       [](unsigned char c){ return std::tolower(c); });
-
-        if (lower_filename.find("remux") != std::string::npos || lower_filename.find("bluray") != std::string::npos)
-        {
-            state_ss << " • " << "Bluray";
-        }
-
-        if (Config::getInstance().getShowClient() && !info.client.empty())
-        {
-            state_ss << " • " << "Watching on " + info.client;
-        }
-		state = state_ss.str();
+		large_text = large_text_ss.str();
 	}
 	else if (info.type == MediaType::Movie)
 	{
@@ -472,16 +476,12 @@ json Discord::createActivity(const MediaInfo &info)
 			if (state_ss.str().length() > 0) { state_ss << " • "; }
             state_ss << "Bluray";
         }
+		state = state_ss.str();
 
         if (Config::getInstance().getShowClient() && !info.client.empty())
         {
-            if (state_ss.str().length() > 0) {
-                state_ss << " • " << "Watching on " << info.client;
-            } else {
-                state_ss << "Watching on " << info.client;
-            }
+			large_text = "Watching on " + info.client;
         }
-		state = state_ss.str();
 	}
 	else if (info.type == MediaType::Music)
 	{
@@ -577,6 +577,11 @@ json Discord::createActivity(const MediaInfo &info)
 	if (state.empty())
 	{
 		state = "Idle"; // Fallback if state somehow ends up empty
+	}
+
+	if (!large_text.empty())
+	{
+		assets["large_text"] = large_text;
 	}
 
 	// Calculate timestamps for progress bar
