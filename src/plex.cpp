@@ -807,28 +807,8 @@ MediaInfo Plex::fetchMediaDetails(const std::string &serverUri, const std::strin
         if (metadata.contains("Media") && metadata["Media"].is_array() && !metadata["Media"].empty())
         {
             auto media = metadata["Media"][0];
-            if (info.type == MediaType::Movie)
-            {
-                if (Config::getInstance().getShowMovieQuality())
-                {
-                    info.videoResolution = media.value("videoResolution", "");
-                }
-                if (Config::getInstance().getShowMovieBitrate())
-                {
-                    info.bitrate = media.value("bitrate", 0);
-                }
-            }
-            else if (info.type == MediaType::TVShow)
-            {
-                if (Config::getInstance().getShowTVShowQuality())
-                {
-                    info.videoResolution = media.value("videoResolution", "");
-                }
-                if (Config::getInstance().getShowTVShowBitrate())
-                {
-                    info.bitrate = media.value("bitrate", 0);
-                }
-            }
+            info.videoResolution = media.value("videoResolution", "");
+            info.bitrate = media.value("bitrate", 0);
 
             if (media.contains("Part") && media["Part"].is_array() && !media["Part"].empty())
             {

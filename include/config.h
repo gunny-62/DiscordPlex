@@ -199,6 +199,9 @@ public:
     bool getShowTVShowQuality() const;
     void setShowTVShowQuality(bool show);
 
+    bool getShowClient() const;
+    void setShowClient(bool show);
+
     bool getShowFlacAsCD() const;
     void setShowFlacAsCD(bool show);
 
@@ -264,6 +267,7 @@ private:
     bool showMovieQuality{true};
     bool showTVShowBitrate{true};
     bool showTVShowQuality{true};
+    bool showClient{true};
     bool showFlacAsCD{true};
     bool gatekeepMusic{false};
     std::string gatekeepMusicTitle;

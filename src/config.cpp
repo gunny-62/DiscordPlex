@@ -186,6 +186,7 @@ void Config::loadFromYaml(const YAML::Node &config)
         showMovieQuality = presence["show_movie_quality"] ? presence["show_movie_quality"].as<bool>() : true;
         showTVShowBitrate = presence["show_tv_show_bitrate"] ? presence["show_tv_show_bitrate"].as<bool>() : true;
         showTVShowQuality = presence["show_tv_show_quality"] ? presence["show_tv_show_quality"].as<bool>() : true;
+        showClient = presence["show_client"] ? presence["show_client"].as<bool>() : true;
         showFlacAsCD = presence["show_flac_as_cd"] ? presence["show_flac_as_cd"].as<bool>() : true;
         gatekeepMusic = presence["gatekeep_music"] ? presence["gatekeep_music"].as<bool>() : false;
         gatekeepMusicTitle = presence["gatekeep_music_title"] ? presence["gatekeep_music_title"].as<std::string>() : "";
@@ -271,6 +272,7 @@ YAML::Node Config::saveToYaml() const
     presence["show_movie_quality"] = showMovieQuality;
     presence["show_tv_show_bitrate"] = showTVShowBitrate;
     presence["show_tv_show_quality"] = showTVShowQuality;
+    presence["show_client"] = showClient;
     presence["show_flac_as_cd"] = showFlacAsCD;
     presence["gatekeep_music"] = gatekeepMusic;
     presence["gatekeep_music_title"] = gatekeepMusicTitle;
@@ -480,6 +482,18 @@ void Config::setShowTVShowQuality(bool show)
 {
     std::unique_lock lock(mutex);
     showTVShowQuality = show;
+}
+
+bool Config::getShowClient() const
+{
+    std::shared_lock lock(mutex);
+    return showClient;
+}
+
+void Config::setShowClient(bool show)
+{
+    std::unique_lock lock(mutex);
+    showClient = show;
 }
 
 bool Config::getShowFlacAsCD() const

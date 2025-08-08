@@ -32,6 +32,7 @@ INT_PTR CALLBACK PreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
 
         // Load current settings
         Config &config = Config::getInstance();
+        CheckDlgButton(hDlg, IDC_CHECK_SHOW_CLIENT, config.getShowClient() ? BST_CHECKED : BST_UNCHECKED);
         CheckDlgButton(hDlg, IDC_CHECK_SHOW_MUSIC, config.getShowMusic() ? BST_CHECKED : BST_UNCHECKED);
         CheckDlgButton(hDlg, IDC_CHECK_GATEKEEP_MUSIC, config.getGatekeepMusic() ? BST_CHECKED : BST_UNCHECKED);
         SetDlgItemText(hDlg, IDC_EDIT_GATEKEEP_MUSIC_TITLE, config.getGatekeepMusicTitle().c_str());
@@ -94,6 +95,7 @@ INT_PTR CALLBACK PreferencesDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPAR
             config.setShowMovieBitrate(IsDlgButtonChecked(hDlg, IDC_CHECK_SHOW_MOVIE_BITRATE) == BST_CHECKED);
             config.setShowMovieQuality(IsDlgButtonChecked(hDlg, IDC_CHECK_SHOW_MOVIE_QUALITY) == BST_CHECKED);
             config.setShowTVShows(IsDlgButtonChecked(hDlg, IDC_CHECK_SHOW_TVSHOWS) == BST_CHECKED);
+            config.setShowClient(IsDlgButtonChecked(hDlg, IDC_CHECK_SHOW_CLIENT) == BST_CHECKED);
             config.setShowTVShowBitrate(IsDlgButtonChecked(hDlg, IDC_CHECK_SHOW_TVSHOW_BITRATE) == BST_CHECKED);
             config.setShowTVShowQuality(IsDlgButtonChecked(hDlg, IDC_CHECK_SHOW_TVSHOW_QUALITY) == BST_CHECKED);
 
