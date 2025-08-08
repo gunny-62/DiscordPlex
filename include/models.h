@@ -89,6 +89,7 @@ struct MediaInfo
 
     // Playback info
     std::string username; // Username of the person watching
+    std::string client; // Client device name
     std::string videoResolution;
     int bitrate;
     PlaybackState state;  // Current playback state

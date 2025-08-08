@@ -654,62 +654,48 @@ void Plex::updateSessionInfo(const std::string &serverId, const std::string &ses
 {
     // Get the preferred URI
     std::string serverUri = getPreferredServerUri(server);
+    std::string username;
+    std::string clientName;
 
     // For owned servers, we need to check if this session belongs to the current user
     if (server->owned)
     {
-        // Create cache key for session user info
-        std::string sessionUserCacheKey = serverUri + sessionKey;
-        bool needUserFetch = true;
-        std::string username;
+        // Fetch session data to get username and client
+        HttpClient client;
+        std::map<std::string, std::string> headers = getStandardHeaders(server->accessToken);
+        std::string url = serverUri + SESSION_ENDPOINT;
+        std::string response;
 
+        if (client.get(url, headers, response))
         {
-            std::lock_guard<std::mutex> cacheLock(m_cacheMutex);
-            auto cacheIt = m_sessionUserCache.find(sessionUserCacheKey);
-            if (cacheIt != m_sessionUserCache.end() && cacheIt->second.valid())
+            try
             {
-                username = cacheIt->second.username;
-                needUserFetch = false;
-                LOG_DEBUG("Plex", "Using cached user info for session: " + sessionKey);
+                auto json = nlohmann::json::parse(response);
+                if (json.contains("MediaContainer") && json["MediaContainer"].contains("Metadata"))
+                {
+                    for (const auto &session : json["MediaContainer"]["Metadata"])
+                    {
+                        if (session.value("sessionKey", "") == sessionKey)
+                        {
+                            username = session.value("User", nlohmann::json::object()).value("title", "");
+                            clientName = session.value("Player", nlohmann::json::object()).value("product", "Unknown Device");
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (const std::exception &e)
+            {
+                LOG_ERROR("Plex", "Error parsing session data: " + std::string(e.what()));
             }
         }
-
-        if (needUserFetch)
+        else
         {
-            username = fetchSessionUsername(serverUri, server->accessToken, sessionKey);
-
-            if (!username.empty())
-            {
-                std::lock_guard<std::mutex> cacheLock(m_cacheMutex);
-                SessionUserCacheEntry entry;
-                entry.timestamp = std::time(nullptr);
-                entry.username = username;
-                m_sessionUserCache[sessionUserCacheKey] = entry;
-            }
-            else
-            {
-                LOG_DEBUG("Plex", "No username found for session: " + sessionKey +
-                                      ", retrying after a short delay");
-                std::this_thread::sleep_for(std::chrono::seconds(1));
-                username = fetchSessionUsername(serverUri, server->accessToken, sessionKey);
-                if (!username.empty())
-                {
-                    std::lock_guard<std::mutex> cacheLock(m_cacheMutex);
-                    SessionUserCacheEntry entry;
-                    entry.timestamp = std::time(nullptr);
-                    entry.username = username;
-                    m_sessionUserCache[sessionUserCacheKey] = entry;
-                }
-                else
-                {
-                    LOG_WARNING("Plex", "Did not find a username tied to session, not updating: " + sessionKey);
-                    return;
-                }
-            }
+            LOG_ERROR("Plex", "Failed to fetch session information for user/client check");
         }
 
         // Skip sessions that don't belong to the current user
-        if (username != Config::getInstance().getPlexUsername())
+        if (username.empty() || username != Config::getInstance().getPlexUsername())
         {
             LOG_DEBUG("Plex", "Ignoring session for different user: " + username);
             return;
@@ -754,6 +740,7 @@ void Plex::updateSessionInfo(const std::string &serverId, const std::string &ses
     info.sessionKey = sessionKey;
     info.serverId = serverId;
     info.mediaKey = mediaKey;
+    info.client = clientName;
 
     // Store the updated info
     m_activeSessions[sessionKey] = info;
@@ -779,62 +766,6 @@ void Plex::updatePlaybackState(MediaInfo &info, const std::string &state, int64_
 
     info.progress = viewOffset / 1000.0; // Convert from milliseconds to seconds
     info.startTime = std::time(nullptr) - static_cast<time_t>(info.progress);
-}
-
-std::string Plex::fetchSessionUsername(const std::string &serverUri, const std::string &accessToken,
-                                       const std::string &sessionKey)
-{
-    LOG_DEBUG("Plex", "Fetching username for session: " + sessionKey);
-
-    HttpClient client;
-    std::map<std::string, std::string> headers = getStandardHeaders(accessToken);
-
-    std::string url = serverUri + SESSION_ENDPOINT;
-    std::string response;
-
-    if (!client.get(url, headers, response))
-    {
-        LOG_ERROR("Plex", "Failed to fetch session information");
-        return "";
-    }
-
-    try
-    {
-        auto json = nlohmann::json::parse(response);
-
-        if (!json.contains("MediaContainer"))
-        {
-            LOG_ERROR("Plex", "Invalid session response format" + response);
-            return "";
-        }
-        if (json["MediaContainer"].contains("size") && json["MediaContainer"]["size"].get<int>() == 0)
-        {
-            LOG_DEBUG("Plex", "No active sessions found");
-            return "";
-        }
-
-        // Find the matching session by sessionKey
-        for (const auto &session : json["MediaContainer"]["Metadata"])
-        {
-            if (session.contains("sessionKey") && session["sessionKey"].get<std::string>() == sessionKey)
-            {
-                // Extract user info
-                if (session.contains("User") && session["User"].contains("title"))
-                {
-                    std::string username = session["User"]["title"].get<std::string>();
-                    LOG_INFO("Plex", "Found user for session " + sessionKey + ": " + username);
-                    return username;
-                }
-                break;
-            }
-        }
-    }
-    catch (const std::exception &e)
-    {
-        LOG_ERROR("Plex", "Error parsing session data: " + std::string(e.what()));
-    }
-
-    return "";
 }
 
 MediaInfo Plex::fetchMediaDetails(const std::string &serverUri, const std::string &accessToken,
@@ -876,21 +807,27 @@ MediaInfo Plex::fetchMediaDetails(const std::string &serverUri, const std::strin
         if (metadata.contains("Media") && metadata["Media"].is_array() && !metadata["Media"].empty())
         {
             auto media = metadata["Media"][0];
-            if (Config::getInstance().getShowMovieQuality() && info.type == MediaType::Movie)
+            if (info.type == MediaType::Movie)
             {
-                info.videoResolution = media.value("videoResolution", "");
+                if (Config::getInstance().getShowMovieQuality())
+                {
+                    info.videoResolution = media.value("videoResolution", "");
+                }
+                if (Config::getInstance().getShowMovieBitrate())
+                {
+                    info.bitrate = media.value("bitrate", 0);
+                }
             }
-            if (Config::getInstance().getShowTVShowQuality() && info.type == MediaType::TVShow)
+            else if (info.type == MediaType::TVShow)
             {
-                info.videoResolution = media.value("videoResolution", "");
-            }
-            if (Config::getInstance().getShowMovieBitrate() && info.type == MediaType::Movie)
-            {
-                info.bitrate = media.value("bitrate", 0);
-            }
-            if (Config::getInstance().getShowTVShowBitrate() && info.type == MediaType::TVShow)
-            {
-                info.bitrate = media.value("bitrate", 0);
+                if (Config::getInstance().getShowTVShowQuality())
+                {
+                    info.videoResolution = media.value("videoResolution", "");
+                }
+                if (Config::getInstance().getShowTVShowBitrate())
+                {
+                    info.bitrate = media.value("bitrate", 0);
+                }
             }
 
             if (media.contains("Part") && media["Part"].is_array() && !media["Part"].empty())
