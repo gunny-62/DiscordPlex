@@ -124,9 +124,16 @@ void Discord::connectionThread()
 
 bool Discord::attemptConnection()
 {
-	if (!ipc.openPipe())
+	for (int i = 0; i < 10; ++i)
 	{
-		return false;
+		if (ipc.openPipe(i))
+		{
+			break;
+		}
+		if (i == 9)
+		{
+			return false;
+		}
 	}
 
 	LOG_DEBUG("Discord", "Connection established, sending handshake");
@@ -362,6 +369,7 @@ json Discord::createActivity(const MediaInfo &info)
 		}
 		activityType = 3; // Watching
 		details = info.grandparentTitle; // Show Title
+		assets["large_text"] = ""; // Clear previous large_text
 		
 		std::string tvShowFormat = Config::getInstance().getTVShowFormat();
 		std::string seasonFormat = Config::getInstance().getSeasonFormat();
@@ -451,6 +459,7 @@ json Discord::createActivity(const MediaInfo &info)
 		}
 		activityType = 3; // Watching
 		details = info.title + " (" + std::to_string(info.year) + ")";
+		assets["large_text"] = ""; // Clear previous large_text
 		
 		std::stringstream state_ss;
 		std::string formatted_resolution = formatResolution(info.videoResolution);

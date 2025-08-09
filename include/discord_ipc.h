@@ -75,9 +75,10 @@ public:
      * On Windows, tries to connect to Discord's named pipes
      * On macOS/Linux, tries to connect to Discord's Unix domain sockets
      *
+     * @param pipeNum The pipe number to try (0-9)
      * @return true if connection was successful, false otherwise
      */
-    bool openPipe();
+    bool openPipe(int pipeNum = -1);
 
     /**
      * Closes the current connection to Discord

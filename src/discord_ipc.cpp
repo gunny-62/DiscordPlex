@@ -33,7 +33,7 @@ DiscordIPC::~DiscordIPC()
 }
 
 #if defined(_WIN32)
-bool DiscordIPC::openPipe()
+bool DiscordIPC::openPipe(int pipeNum)
 {
     // Windows implementation using named pipes
     LOG_INFO("DiscordIPC", "Attempting to connect to Discord via Windows named pipes");
@@ -76,7 +76,7 @@ bool DiscordIPC::openPipe()
 }
 
 #elif defined(__APPLE__)
-bool DiscordIPC::openPipe()
+bool DiscordIPC::openPipe(int pipeNum)
 {
     const char *temp = getenv("TMPDIR");
     LOG_INFO("DiscordIPC", "Attempting to connect to Discord via Unix sockets on macOS");
@@ -134,7 +134,7 @@ bool DiscordIPC::openPipe()
     return false;
 }
 #elif defined(__linux__) || defined(__unix__)
-bool DiscordIPC::openPipe()
+bool DiscordIPC::openPipe(int pipeNum)
 {
     // Unix implementation using sockets
     LOG_INFO("DiscordIPC", "Attempting to connect to Discord via Unix sockets");
