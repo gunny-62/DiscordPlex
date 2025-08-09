@@ -1,6 +1,6 @@
 # Presence For Plex
 
-A lightweight C++ application that displays your Plex media activity in Discord's Rich Presence.
+A lightweight C++ application that displays your Plex media activity in Discord's Rich Presence. Uses around 3-4 MB of RAM
 
 ## Features
 
