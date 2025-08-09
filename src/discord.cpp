@@ -369,7 +369,6 @@ json Discord::createActivity(const MediaInfo &info)
 		}
 		activityType = 3; // Watching
 		details = info.grandparentTitle; // Show Title
-		assets["large_text"] = ""; // Clear previous large_text
 		
 		std::string tvShowFormat = Config::getInstance().getTVShowFormat();
 		std::string seasonFormat = Config::getInstance().getSeasonFormat();
@@ -453,13 +452,14 @@ json Discord::createActivity(const MediaInfo &info)
 	}
 	else if (info.type == MediaType::Movie)
 	{
+		LOG_DEBUG("Discord", "Creating activity for a movie");
 		if (!Config::getInstance().getShowMovies())
 		{
+			LOG_DEBUG("Discord", "Movie activity is disabled, returning empty activity");
 			return {};
 		}
 		activityType = 3; // Watching
 		details = info.title + " (" + std::to_string(info.year) + ")";
-		assets["large_text"] = ""; // Clear previous large_text
 		
 		std::stringstream state_ss;
 		std::string formatted_resolution = formatResolution(info.videoResolution);
@@ -491,6 +491,7 @@ json Discord::createActivity(const MediaInfo &info)
         {
 			large_text = "Watching on " + info.client;
         }
+		LOG_DEBUG_STREAM("Discord", "Movie activity created: details='" << details << "', state='" << state << "', large_text='" << large_text << "'");
 	}
 	else if (info.type == MediaType::Music)
 	{
