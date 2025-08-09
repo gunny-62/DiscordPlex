@@ -692,7 +692,7 @@ void Plex::updateSessionInfo(const std::string &serverId, const std::string &ses
         }
 
     // Skip sessions that don't belong to the current user
-    if (server->owned && (username.empty() || username != Config::getInstance().getPlexUsername()))
+    if (username.empty() || username != Config::getInstance().getPlexUsername())
     {
         LOG_DEBUG("Plex", "Ignoring session for different user: " + username);
         return;
