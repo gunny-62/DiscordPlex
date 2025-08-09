@@ -69,7 +69,11 @@ bool DiscordIPC::openPipe(int pipeNum)
 
         // Log the specific error for debugging
         DWORD error = GetLastError();
-        LOG_DEBUG("DiscordIPC", "Failed to connect to " + pipeName + ": error code " + std::to_string(error));
+        if (error != ERROR_FILE_NOT_FOUND) {
+            LOG_ERROR("DiscordIPC", "Failed to connect to " + pipeName + ": error code " + std::to_string(error));
+        } else {
+            LOG_DEBUG("DiscordIPC", "Pipe not found: " + pipeName);
+        }
     }
     LOG_INFO("DiscordIPC", "Could not connect to any Discord pipe. Is Discord running?");
     return false;
