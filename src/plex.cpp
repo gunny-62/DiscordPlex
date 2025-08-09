@@ -657,14 +657,11 @@ void Plex::updateSessionInfo(const std::string &serverId, const std::string &ses
     std::string username;
     std::string clientName;
 
-    // For owned servers, we need to check if this session belongs to the current user
-    if (server->owned)
-    {
-        // Fetch session data to get username and client
-        HttpClient client;
-        std::map<std::string, std::string> headers = getStandardHeaders(server->accessToken);
-        std::string url = serverUri + SESSION_ENDPOINT;
-        std::string response;
+    // Fetch session data to get username and client
+    HttpClient client;
+    std::map<std::string, std::string> headers = getStandardHeaders(server->accessToken);
+    std::string url = serverUri + SESSION_ENDPOINT;
+    std::string response;
 
         if (client.get(url, headers, response))
         {
@@ -694,12 +691,11 @@ void Plex::updateSessionInfo(const std::string &serverId, const std::string &ses
             LOG_ERROR("Plex", "Failed to fetch session information for user/client check");
         }
 
-        // Skip sessions that don't belong to the current user
-        if (username.empty() || username != Config::getInstance().getPlexUsername())
-        {
-            LOG_DEBUG("Plex", "Ignoring session for different user: " + username);
-            return;
-        }
+    // Skip sessions that don't belong to the current user
+    if (server->owned && (username.empty() || username != Config::getInstance().getPlexUsername()))
+    {
+        LOG_DEBUG("Plex", "Ignoring session for different user: " + username);
+        return;
     }
 
     // Create a cache key for media info
