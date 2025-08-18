@@ -24,9 +24,4 @@ A lightweight C++ application that displays your Plex media activity in Discord'
 -   CMake 3.25+
 -   vcpkg
 
-### Build Instructions
 
-```bash
-git clone https://github.com/gunny-62/DiscordPlex.git
-cd DiscordPlex
-./build.bat
