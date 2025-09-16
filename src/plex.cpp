@@ -1165,72 +1165,79 @@ void Plex::fetchTMDBArtwork(const std::string &tmdbId, MediaInfo &info, const st
 {
     LOG_DEBUG("Plex", "Fetching TMDB artwork for ID: " + tmdbId);
 
-    if (!info.thumbPath.empty() && !serverUri.empty() && !plexAccessToken.empty())
-    {
-        // Use the improved buildArtworkUrl method for Discord compatibility
-        buildArtworkUrl(info, serverUri, plexAccessToken);
-        LOG_INFO("Plex", "Using Discord-compatible Plex transcoder for artwork: " + info.artPath);
-        return;
-    }
-
     // TMDB API requires an access token - get it from config
     std::string accessToken = Config::getInstance().getTMDBAccessToken();
 
-    if (accessToken.empty())
+    // Prioritize TMDB images for better Discord compatibility
+    if (!accessToken.empty())
     {
-        LOG_INFO("Plex", "No TMDB access token available");
-        return;
+        LOG_INFO("Plex", "Attempting TMDB artwork fetch (preferred for Discord compatibility)");
+
+        // Create HTTP client
+        HttpClient client;
+        std::string url;
+
+        // Construct proper endpoint URL based on media type
+        if (info.type == MediaType::Movie)
+        {
+            url = "https://api.themoviedb.org/3/movie/" + tmdbId + "/images";
+        }
+        else
+        {
+            url = "https://api.themoviedb.org/3/tv/" + tmdbId + "/images";
+        }
+
+        // Set up headers with Bearer token for v4 authentication
+        std::map<std::string, std::string> headers = {
+            {"Authorization", "Bearer " + accessToken},
+            {"Content-Type", "application/json;charset=utf-8"}};
+
+        // Make the request
+        std::string response;
+        if (client.get(url, headers, response))
+        {
+            try
+            {
+                auto json = nlohmann::json::parse(response);
+
+                // First try to get a poster
+                if (json.contains("posters") && !json["posters"].empty())
+                {
+                    std::string posterPath = json["posters"][0]["file_path"];
+                    info.artPath = std::string(TMDB_IMAGE_BASE_URL) + posterPath;
+                    LOG_INFO("Plex", "Found TMDB poster: " + info.artPath);
+                    return; // Successfully got TMDB image
+                }
+                // Fallback to backdrops
+                else if (json.contains("backdrops") && !json["backdrops"].empty())
+                {
+                    std::string backdropPath = json["backdrops"][0]["file_path"];
+                    info.artPath = std::string(TMDB_IMAGE_BASE_URL) + backdropPath;
+                    LOG_INFO("Plex", "Found TMDB backdrop: " + info.artPath);
+                    return; // Successfully got TMDB image
+                }
+            }
+            catch (const std::exception &e)
+            {
+                LOG_ERROR("Plex", "Error parsing TMDB response: " + std::string(e.what()));
+            }
+        }
+        else
+        {
+            LOG_WARNING("Plex", "Failed to fetch TMDB images, will fallback to Plex transcoder");
+        }
     }
-
-    // Create HTTP client
-    HttpClient client;
-    std::string url;
-
-    // Construct proper endpoint URL based on media type
-    if (info.type == MediaType::Movie)
+    
+    // Fallback to Plex transcoder if TMDB failed or no access token
+    if (!info.thumbPath.empty() && !serverUri.empty() && !plexAccessToken.empty())
     {
-        url = "https://api.themoviedb.org/3/movie/" + tmdbId + "/images";
+        LOG_INFO("Plex", "Falling back to Plex transcoder for artwork");
+        buildArtworkUrl(info, serverUri, plexAccessToken);
+        LOG_INFO("Plex", "Using Plex transcoder as fallback: " + info.artPath);
     }
     else
     {
-        url = "https://api.themoviedb.org/3/tv/" + tmdbId + "/images";
-    }
-
-    // Set up headers with Bearer token for v4 authentication
-    std::map<std::string, std::string> headers = {
-        {"Authorization", "Bearer " + accessToken},
-        {"Content-Type", "application/json;charset=utf-8"}};
-
-    // Make the request
-    std::string response;
-    if (!client.get(url, headers, response))
-    {
-        LOG_ERROR("Plex", "Failed to fetch TMDB images");
-        return;
-    }
-
-    try
-    {
-        auto json = nlohmann::json::parse(response);
-
-        // First try to get a poster
-        if (json.contains("posters") && !json["posters"].empty())
-        {
-            std::string posterPath = json["posters"][0]["file_path"];
-            info.artPath = std::string(TMDB_IMAGE_BASE_URL) + posterPath;
-            LOG_INFO("Plex", "Found TMDB poster: " + info.artPath);
-        }
-        // Fallback to backdrops
-        else if (json.contains("backdrops") && !json["backdrops"].empty())
-        {
-            std::string backdropPath = json["backdrops"][0]["file_path"];
-            info.artPath = std::string(TMDB_IMAGE_BASE_URL) + backdropPath;
-            LOG_INFO("Plex", "Found TMDB backdrop: " + info.artPath);
-        }
-    }
-    catch (const std::exception &e)
-    {
-        LOG_ERROR("Plex", "Error parsing TMDB response: " + std::string(e.what()));
+        LOG_WARNING("Plex", "No TMDB access token and no Plex artwork available");
     }
 }
 
