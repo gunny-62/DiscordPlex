@@ -33,33 +33,33 @@ jobs:
       run: |
         VERSION=${GITHUB_REF#refs/tags/}
         echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "VERSION: $VERSION"
         echo "$VERSION" > version.txt
 
     - name: Setup vcpkg
       uses: lukka/run-vcpkg@v11
-      with:
-        vcpkgGitCommitId: '6ef1763f3cbe570d6378632c9b5793479c37fb07'
 
     - name: Configure CMake (Windows)
       if: matrix.os == 'windows-latest'
       run: |
-        cmake -S . -B build -G "Visual Studio 17 2022" -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=${{ matrix.vcpkg_triplet }}
+        cmake -S . -B build -G "Visual Studio 17 2022" -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=${{ matrix.vcpkg_triplet }}
 
     - name: Configure CMake (macOS)
       if: matrix.os == 'macos-latest'
       run: |
-        cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=${{ matrix.vcpkg_triplet }} -DCMAKE_BUILD_TYPE=Release
+        cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=${{ matrix.vcpkg_triplet }} -DCMAKE_BUILD_TYPE=Release
 
     - name: Build
       run: cmake --build build --config Release
 
     - name: Package (Windows)
       if: matrix.os == 'windows-latest'
+      shell: cmd
       run: |
         cd build
         cpack -C Release
-        mkdir -p ../artifacts
-        copy PresenceForPlex-*-win64.exe ../artifacts/${{ matrix.artifact_name }}
+        mkdir ..\artifacts
+        for /f %%i in ('dir /b PresenceForPlex-*-win64.exe') do copy "%%i" "..\artifacts\${{ matrix.artifact_name }}"
 
     - name: Package (macOS)
       if: matrix.os == 'macos-latest'
