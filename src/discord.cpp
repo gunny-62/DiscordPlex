@@ -353,8 +353,18 @@ json Discord::createActivity(const MediaInfo &info)
 	}
 	else if (!info.artPath.empty())
 	{
-		assets["large_image"] = info.artPath;
-		LOG_INFO("Discord", "Using artwork URL: " + info.artPath);
+		// Check if URL is likely to be blocked by Discord
+		if (info.artPath.find("/photo/:/transcode") != std::string::npos)
+		{
+			// Plex transcoder URLs are frequently blocked by Discord
+			LOG_WARNING("Discord", "Plex transcoder URL detected, using static Plex asset instead: " + info.artPath);
+			assets["large_image"] = "plex";
+		}
+		else
+		{
+			assets["large_image"] = info.artPath;
+			LOG_INFO("Discord", "Using artwork URL: " + info.artPath);
+		}
 	}
 	else
 	{
@@ -881,3 +891,4 @@ void Discord::setDisconnectedCallback(ConnectionCallback callback)
 {
 	onDisconnected = callback;
 }
+
