@@ -18,7 +18,7 @@ if not defined VERSION_TAG (
     exit /b 1
 )
 
-echo Target version: %VERSION_TAG%
+echo Target version: !VERSION_TAG!
 echo.
 
 REM --- Check for GitHub CLI ---
@@ -39,7 +39,7 @@ if not defined VCPKG_ROOT (
 )
 
 REM --- Write version to file ---
-echo %VERSION_TAG% > version.txt
+echo !VERSION_TAG! > version.txt
 
 REM --- Clean build directory ---
 echo Cleaning previous build...
@@ -67,26 +67,26 @@ for %%f in ("%RELEASE_FOLDER%\PresenceForPlex-*-win64.exe") do (
 if defined INSTALLER_PATH (
     echo Found installer: !INSTALLER_PATH!
 ) else (
-    echo ERROR: Could not find the Windows installer .exe file in %RELEASE_FOLDER%\
+    echo ERROR: Could not find the Windows installer .exe file in !RELEASE_FOLDER!\
     echo Available files:
-    dir "%RELEASE_FOLDER%\" /b
+    dir "!RELEASE_FOLDER!\" /b
     pause
     exit /b 1
 )
 
 REM --- Upload to existing GitHub release ---
 echo.
-echo --- Uploading Windows installer to GitHub release %VERSION_TAG%... ---
-gh release upload "%VERSION_TAG%" --repo "%GITHUB_REPO%" "!INSTALLER_PATH!" --clobber
-if %errorlevel% neq 0 (
+echo --- Uploading Windows installer to GitHub release !VERSION_TAG!... ---
+gh release upload "!VERSION_TAG!" --repo "!GITHUB_REPO!" "!INSTALLER_PATH!" --clobber
+if !errorlevel! neq 0 (
     echo ERROR: GitHub release upload failed.
     pause
-    exit /b %errorlevel%
+    exit /b !errorlevel!
 )
 
 echo.
 echo --- Windows build uploaded successfully! ---
-echo The Windows installer has been added to release %VERSION_TAG%
-echo Release URL: https://github.com/%GITHUB_REPO%/releases/tag/%VERSION_TAG%
+echo The Windows installer has been added to release !VERSION_TAG!
+echo Release URL: https://github.com/!GITHUB_REPO!/releases/tag/!VERSION_TAG!
 pause
 endlocal
