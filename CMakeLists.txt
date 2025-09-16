@@ -50,12 +50,18 @@ set(SOURCES
     src/logger.cpp
     src/main.cpp
     src/plex.cpp
-    src/preferences.cpp
     src/single_instance.cpp
-    src/trayicon.cpp
     src/uuid.cpp
     src/utils.cpp
 )
+
+# Platform-specific source files
+if(WIN32)
+    list(APPEND SOURCES
+        src/preferences.cpp
+        src/trayicon.cpp
+    )
+endif()
 
 set(HEADERS
     include/application.h
@@ -81,7 +87,7 @@ if(WIN32)
   set(RES_FILES assets/resources.rc)
 endif()
 
-find_package(CURL CONFIG REQUIRED) 
+find_package(CURL REQUIRED)
 find_package(nlohmann_json REQUIRED)
 find_package(yaml-cpp CONFIG REQUIRED)
 

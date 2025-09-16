@@ -1141,8 +1141,23 @@ void Plex::buildArtworkUrl(MediaInfo &info, const std::string &serverUri, const 
 {
     if (!info.thumbPath.empty() && !serverUri.empty() && !accessToken.empty())
     {
-        info.artPath = serverUri + "/photo/:/transcode?width=256&height=256&minSize=1&url=" + info.thumbPath + "&X-Plex-Token=" + accessToken;
-        LOG_INFO("Plex", "Built artwork URL: " + info.artPath);
+        // Generate cache-busting timestamp to bypass Discord's aggressive caching
+        auto now = std::chrono::system_clock::now();
+        auto timestamp = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
+        
+        // Ensure HTTPS for Discord compatibility
+        std::string baseUri = serverUri;
+        if (baseUri.substr(0, 7) == "http://") {
+            baseUri = "https://" + baseUri.substr(7);
+            LOG_INFO("Plex", "Converting HTTP to HTTPS for Discord compatibility");
+        }
+        
+        // Build URL with Discord-friendly parameters
+        info.artPath = baseUri + "/photo/:/transcode?width=256&height=256&minSize=1&upscale=1&format=webp&url=" 
+                     + utils::urlEncode(info.thumbPath) + "&X-Plex-Token=" + accessToken 
+                     + "&cb=" + std::to_string(timestamp);
+        
+        LOG_INFO("Plex", "Built Discord-compatible artwork URL: " + info.artPath);
     }
 }
 
@@ -1152,8 +1167,9 @@ void Plex::fetchTMDBArtwork(const std::string &tmdbId, MediaInfo &info, const st
 
     if (!info.thumbPath.empty() && !serverUri.empty() && !plexAccessToken.empty())
     {
-        info.artPath = serverUri + "/photo/:/transcode?width=256&height=256&minSize=1&url=" + info.thumbPath + "&X-Plex-Token=" + plexAccessToken;
-        LOG_INFO("Plex", "Using Plex transcoder for artwork: " + info.artPath);
+        // Use the improved buildArtworkUrl method for Discord compatibility
+        buildArtworkUrl(info, serverUri, plexAccessToken);
+        LOG_INFO("Plex", "Using Discord-compatible Plex transcoder for artwork: " + info.artPath);
         return;
     }
 

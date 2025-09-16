@@ -400,6 +400,7 @@ void Application::downloadAndInstallUpdate(const std::string& url)
 {
     LOG_INFO("Application", "Downloading update from " + url);
 
+#ifdef _WIN32
     try
     {
         // Get temp path
@@ -426,24 +427,35 @@ void Application::downloadAndInstallUpdate(const std::string& url)
             else
             {
                 LOG_ERROR("Application", "Failed to launch installer. ShellExecute error code: " + std::to_string(result));
-#ifdef _WIN32
                 m_trayIcon->showNotification("Update Failed", "Could not launch the installer.", true);
-#endif
             }
         }
         else
         {
             LOG_ERROR("Application", "Failed to download update");
-#ifdef _WIN32
             m_trayIcon->showNotification("Update Failed", "Could not download the update.", true);
-#endif
         }
     }
     catch (const std::exception& e)
     {
         LOG_ERROR("Application", "Exception during update download: " + std::string(e.what()));
-#ifdef _WIN32
         m_trayIcon->showNotification("Update Failed", "An error occurred while downloading the update.", true);
-#endif
     }
+#else
+    // On non-Windows platforms, just open the URL in the default browser
+    LOG_INFO("Application", "Opening download URL in browser: " + url);
+    
+    std::string command;
+#ifdef __APPLE__
+    command = "open '" + url + "'";
+#else
+    command = "xdg-open '" + url + "'";
+#endif
+    
+    int result = std::system(command.c_str());
+    if (result != 0)
+    {
+        LOG_ERROR("Application", "Failed to open URL in browser. Return code: " + std::to_string(result));
+    }
+#endif
 }
