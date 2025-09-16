@@ -1,0 +1,121 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - '*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version'
+        required: true
+        default: '6.0.11'
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set version
+      run: |
+        if ("${{ github.event_name }}" -eq "push") {
+          $VERSION = "${{ github.ref }}" -replace "refs/tags/", ""
+        } else {
+          $VERSION = "${{ github.event.inputs.version }}"
+        }
+        echo "VERSION=$VERSION" >> $env:GITHUB_ENV
+        echo $VERSION > version.txt
+    
+    - name: Setup vcpkg
+      run: |
+        git clone https://github.com/Microsoft/vcpkg.git
+        .\vcpkg\bootstrap-vcpkg.bat
+        echo "VCPKG_ROOT=$pwd\vcpkg" >> $env:GITHUB_ENV
+    
+    - name: Build Windows
+      run: |
+        cmake -S . -B build -G "Visual Studio 17 2022" -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=x64-windows-static
+        cmake --build build --config Release
+        cd build
+        cpack -C Release
+        
+    - name: Upload Windows artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-build
+        path: PresenceForPlex-*-win64.exe
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set version
+      run: |
+        if [ "${{ github.event_name }}" = "push" ]; then
+          VERSION=${GITHUB_REF#refs/tags/}
+        else
+          VERSION=${{ github.event.inputs.version }}
+        fi
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
+        echo $VERSION > version.txt
+    
+    - name: Setup vcpkg
+      run: |
+        git clone https://github.com/Microsoft/vcpkg.git
+        ./vcpkg/bootstrap-vcpkg.sh
+        echo "VCPKG_ROOT=$PWD/vcpkg" >> $GITHUB_ENV
+    
+    - name: Build macOS
+      run: |
+        export VCPKG_ROOT=$PWD/vcpkg
+        cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=arm64-osx -DCMAKE_BUILD_TYPE=Release
+        cmake --build build --config Release
+        cd build
+        cpack -C Release
+        
+    - name: Upload macOS artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: macos-build
+        path: build/PresenceForPlex-*-Darwin.dmg
+
+  release:
+    needs: [build-windows, build-macos]
+    runs-on: ubuntu-latest
+    if: always() && (needs.build-windows.result == 'success' || needs.build-macos.result == 'success')
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set version
+      run: |
+        if [ "${{ github.event_name }}" = "push" ]; then
+          VERSION=${GITHUB_REF#refs/tags/}
+        else
+          VERSION=${{ github.event.inputs.version }}
+        fi
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
+        echo $VERSION > version.txt
+    
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: artifacts
+    
+    - name: Generate changelog
+      run: |
+        python3 generate_changelog.py
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ env.VERSION }}
+        name: Release ${{ env.VERSION }}
+        body_path: release_notes/changelog_${{ env.VERSION }}.md
+        files: |
+          artifacts/windows-build/PresenceForPlex-*-win64.exe
+          artifacts/macos-build/PresenceForPlex-*-Darwin.dmg
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
