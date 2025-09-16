@@ -3,11 +3,21 @@ setlocal enabledelayedexpansion
 
 REM --- Configuration ---
 set "GITHUB_REPO=gunny-62/DiscordPlex"
-set "VERSION_TAG=6.0.11"
 set "BUILD_SCRIPT=build.bat"
 set "RELEASE_FOLDER=release"
 
 echo === Windows Build and Upload Script for PresenceForPlex ===
+echo.
+
+REM --- Get Version Tag ---
+set "VERSION_TAG="
+set /p VERSION_TAG="Enter the version tag to upload to (e.g., 6.0.11): "
+if not defined VERSION_TAG (
+    echo ERROR: No version tag entered. Aborting.
+    pause
+    exit /b 1
+)
+
 echo Target version: %VERSION_TAG%
 echo.
 
@@ -49,12 +59,14 @@ if %errorlevel% neq 0 (
 REM --- Find the installer file ---
 echo.
 echo Looking for Windows installer...
+set "INSTALLER_PATH="
 for %%f in ("%RELEASE_FOLDER%\PresenceForPlex-*-win64.exe") do (
     set "INSTALLER_PATH=%%f"
-    echo Found installer: !INSTALLER_PATH!
 )
 
-if not defined INSTALLER_PATH (
+if defined INSTALLER_PATH (
+    echo Found installer: !INSTALLER_PATH!
+) else (
     echo ERROR: Could not find the Windows installer .exe file in %RELEASE_FOLDER%\
     echo Available files:
     dir "%RELEASE_FOLDER%\" /b
