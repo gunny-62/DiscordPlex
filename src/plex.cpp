@@ -515,29 +515,49 @@ std::string Plex::getPreferredServerUri(const std::shared_ptr<PlexServer> &serve
     // No valid cache entry, determine the best URI to use
     std::string serverUri;
 
-    // Only test local URI if it exists
-    if (!server->localUri.empty())
+    // Try public URI first
+    if (!server->publicUri.empty())
     {
-        LOG_DEBUG("Plex", "Testing local URI accessibility: " + server->localUri);
+        LOG_DEBUG("Plex", "Testing public URI accessibility: " + server->publicUri);
         HttpClient testClient;
         std::map<std::string, std::string> headers = getStandardHeaders(server->accessToken);
         std::string response;
 
         // Try a basic request to check connectivity
-        if (testClient.get(server->localUri, headers, response))
+        if (testClient.get(server->publicUri, headers, response))
         {
-            LOG_INFO("Plex", "Local URI is accessible, using it: " + server->localUri);
-            serverUri = server->localUri;
+            LOG_INFO("Plex", "Public URI is accessible, using it: " + server->publicUri);
+            serverUri = server->publicUri;
         }
         else
         {
-            LOG_INFO("Plex", "Local URI not accessible, falling back to public URI");
-            serverUri = server->publicUri;
+            LOG_INFO("Plex", "Public URI not accessible, trying local URI");
+            // Fall back to local URI if available
+            if (!server->localUri.empty())
+            {
+                LOG_DEBUG("Plex", "Testing local URI accessibility: " + server->localUri);
+                if (testClient.get(server->localUri, headers, response))
+                {
+                    LOG_INFO("Plex", "Local URI is accessible, using it as fallback: " + server->localUri);
+                    serverUri = server->localUri;
+                }
+                else
+                {
+                    LOG_ERROR("Plex", "Neither public nor local URIs are accessible");
+                    return "";
+                }
+            }
+            else
+            {
+                LOG_ERROR("Plex", "Public URI not accessible and no local URI available");
+                return "";
+            }
         }
     }
-    else
+    else if (!server->localUri.empty())
     {
-        serverUri = server->publicUri;
+        LOG_INFO("Plex", "No public URI available, trying local URI");
+        serverUri = server->localUri;
     }
 
     // Cache the result
