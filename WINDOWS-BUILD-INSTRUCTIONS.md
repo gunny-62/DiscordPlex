@@ -12,7 +12,14 @@
    git pull origin master
    ```
 
-2. **Run the self-contained build script**:
+2. **Run one of the build scripts**:
+
+   PowerShell (Recommended):
+   ```powershell
+   ./build.ps1
+   ```
+
+   OR Batch file:
    ```batch
    self-contained-windows-build.bat
    ```

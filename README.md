@@ -27,13 +27,24 @@ A lightweight C++ application that displays your Plex media activity in Discord'
 
 ### Build Instructions
 
+#### Using Warp Terminal (Recommended)
+
+1. Clone the repository using Warp's clone feature
+2. Ask the Warp AI to assist with building and making changes
+
+#### Manual Build
+
 ```bash
 git clone https://github.com/gunny-62/DiscordPlex.git
 cd DiscordPlex
 
 # Windows
-./build.bat
+./build.ps1  # PowerShell script (recommended)
+# or
+./self-contained-windows-build.bat  # Alternative batch script
 
 # macOS/Linux  
 ./build.sh
 ```
+
+For detailed Windows build instructions, see [WINDOWS-BUILD-INSTRUCTIONS.md](WINDOWS-BUILD-INSTRUCTIONS.md).
